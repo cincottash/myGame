@@ -6,7 +6,9 @@ def main():
 	
 	done = False
 
-	hero = Player()
+	all_sprites = pygame.sprite.Group()
+	player = Player()
+	all_sprites.add(player)
 	
 	while(not done):
 
@@ -17,11 +19,15 @@ def main():
 			elif event.type == pygame.QUIT:
 				done = False
 			else:
+			
+				all_sprites.update(event)
+
 				for image in backgroundImages:
 					screen.blit(image, (0,0))
+				all_sprites.draw(screen)
 
-		clock.tick(30)
-		pygame.display.update()
+				clock.tick(60)
+				pygame.display.update()
 
 if __name__ == '__main__':
     main()
