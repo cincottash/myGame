@@ -1,12 +1,12 @@
 import pygame
 import os
+from globals import *
+
 
 def pygameSetup():
 
 	pygame.init()
 
-	SCREEN_WIDTH = 928
-	SCREEN_HEIGHT = 793
 
 	clock = pygame.time.Clock()
 
