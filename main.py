@@ -37,7 +37,7 @@ def main():
 		
 		all_sprites.draw(screen)
 
-		clock.tick(60)
+		clock.tick(30)
 		pygame.display.update()
 
 if __name__ == '__main__':

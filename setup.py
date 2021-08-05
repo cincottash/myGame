@@ -16,7 +16,6 @@ def pygameSetup():
 
 	backgroundFileNames = os.listdir(backgroundAssetsDir)
 
-
 	for filename in backgroundFileNames:
 		#print(filename)
 		backgroundImages.append(pygame.image.load(backgroundAssetsDir + filename))

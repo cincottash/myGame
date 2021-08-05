@@ -13,9 +13,12 @@ class Player(pygame.sprite.Sprite):
 
         heroPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
 
+        #TODO: THIS SHIT ISNT SORTED
         idleFileNames = os.listdir(os.path.join(heroPath, 'idle'))
 
-        idleFileNames = idleFileNames[::-1]
+        print(idleFileNames)
+
+        #exit(0)
 
         for fileName in idleFileNames:
             self.idleAnimationList.append(pygame.image.load(os.path.join(heroPath,'idle', fileName)))
@@ -26,44 +29,40 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = SCREEN_WIDTH/2
         self.rect.centery = SCREEN_HEIGHT/2
 
-    #def checkScreenCollision(self, keysPressed, HERO_HEIGHT, HERO_WIDTH):
-
-    def update(self, keysPressed):
-
-        HERO_HEIGHT = self.rect.height
-        HERO_WIDTH = self.rect.width
-
+    def handleKeyPress(self, keysPressed):
         for key in keysPressed:
             if key == 'w':
-                #CHECK IF WE GO OFF THE SCREEN
-                if self.rect.centery - MOVE_SPEED - HERO_HEIGHT/2 < 0:
-                    self.rect.centery =  0 + HERO_HEIGHT/2
-                else:
-                    self.rect = self.rect.move(0, -MOVE_SPEED)
+                self.rect = self.rect.move(0, -MOVE_SPEED)
             if key == 'a':
-                if self.rect.centerx - HERO_WIDTH/2 - MOVE_SPEED < 0:
-                    self.rect.centerx = 0 + HERO_WIDTH/2
-                else:
-                    self.rect = self.rect.move(-MOVE_SPEED, 0)
+                self.rect = self.rect.move(-MOVE_SPEED, 0)
             if key == 's':
-                if self.rect.centery + MOVE_SPEED + HERO_HEIGHT/2 > SCREEN_HEIGHT:
-                    self.rect.centery =  SCREEN_HEIGHT - HERO_HEIGHT/2
-                else:
-                    self.rect = self.rect.move(0, MOVE_SPEED)
+                self.rect = self.rect.move(0, MOVE_SPEED)
             if key == 'd':
-                if self.rect.centerx + HERO_WIDTH/2 + MOVE_SPEED > SCREEN_WIDTH:
-                    self.rect.centerx = SCREEN_WIDTH - HERO_WIDTH/2
-                else:
-                    self.rect = self.rect.move(MOVE_SPEED, 0)
+                self.rect = self.rect.move(MOVE_SPEED, 0)
 
+    #Keeps the hero on the screen
+    def keepHeroOnScreen(self, HERO_HEIGHT, HERO_WIDTH):
+        if self.rect.centery - HERO_HEIGHT/2 < 0:
+            self.rect.centery =  0 + HERO_HEIGHT/2
         
+        if self.rect.centerx - HERO_WIDTH/2 < 0:
+            self.rect.centerx = 0 + HERO_WIDTH/2
+        
+        if self.rect.centery + HERO_HEIGHT/2 > SCREEN_HEIGHT:
+            self.rect.centery = SCREEN_HEIGHT - HERO_HEIGHT/2
+        
+        if self.rect.centerx + HERO_WIDTH/2 > SCREEN_WIDTH:
+            self.rect.centerx = SCREEN_WIDTH - HERO_WIDTH/2
+
+    #create a new rect for our new hero image
+    def updateHeroRectImage(self):
         if self.animationFrame == len(self.idleAnimationList) - 1:
             self.animationFrame = 0
         else:
             self.animationFrame += 1
         
         self.image = self.idleAnimationList[self.animationFrame]
-        
+
         #keep track of old centerx and centery
         centerx = self.rect.centerx
         centery = self.rect.centery
@@ -72,4 +71,19 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centery = centery
         self.rect.centerx = centerx
+
+    def update(self, keysPressed):
+
+        HERO_HEIGHT = self.rect.height
+        HERO_WIDTH = self.rect.width
+
+        self.handleKeyPress(keysPressed)
+
+        self.keepHeroOnScreen(HERO_HEIGHT, HERO_WIDTH)
+
+        self.updateHeroRectImage()
+        
+
+
+        
 
