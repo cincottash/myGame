@@ -46,8 +46,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = SCREEN_WIDTH/2
         self.rect.centery = SCREEN_HEIGHT/2
 
-
-    #TODO: FIX THIS SHIT ADD SMOOTH MOVEMT WITH A,V AND G
     def handleHeroMovement(self, keysPressed):
         if keysPressed[pygame.K_SPACE]:
             self.ay = 0
@@ -89,10 +87,10 @@ class Player(pygame.sprite.Sprite):
         if self.vy > 0 and abs(self.vy) > MAX_VELOCITY:
             self.vy = MAX_VELOCITY
         
-        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\n'.format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width))
+        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\n'.
+            format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width))
         self.rect = self.rect.move(self.vx, self.vy)
 
-    #Keeps the hero on the screen
     def keepHeroOnScreen(self):
         HERO_HEIGHT = self.rect.height
         HERO_WIDTH = self.rect.width
@@ -139,11 +137,13 @@ class Player(pygame.sprite.Sprite):
             if newAnimation != self.currentAnmiation:
                 self.currentAnmiation = newAnimation
                 self.animationFrame = 0
+            
+            self.image = self.animations[self.currentAnmiation][self.animationFrame]
+            
             #flip image if we are running left
             if self.ax < 0:
                 self.image = pygame.transform.flip(self.image, True, False)
-            else:
-                self.image = self.animations[self.currentAnmiation][self.animationFrame]
+                
         else:
             newAnimation = 'idle'
             if newAnimation != self.currentAnmiation:
