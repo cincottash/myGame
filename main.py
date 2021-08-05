@@ -6,38 +6,31 @@ def main():
 	
 	done = False
 
-	all_sprites = pygame.sprite.Group()
+	playerSpriteGroup = pygame.sprite.Group()
 	player = Player()
-	all_sprites.add(player)
+	playerSpriteGroup.add(player)
 	
 	while(not done):
 
-		keysPressed = []
+		
 		for event in pygame.event.get():
 			#Enter will exit the test
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
 				done = True
 			elif event.type == pygame.QUIT:
-				done = False
-			else:
+				pygame.quit()
+				done = True
 
-				if event.type == pygame.KEYDOWN and event.key == pygame.K_w:
-					keysPressed.append('w')
-				if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
-					keysPressed.append('a')
-				if event.type == pygame.KEYDOWN and event.key == pygame.K_s:
-					keysPressed.append('s')
-				if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
-					keysPressed.append('d')
-			
-		all_sprites.update(keysPressed)
+		keysPressed = pygame.key.get_pressed()
+
+		playerSpriteGroup.update(keysPressed)
 
 		for image in backgroundImages:
 			screen.blit(image, (0,0))
 		
-		all_sprites.draw(screen)
+		playerSpriteGroup.draw(screen)
 
-		clock.tick(30)
+		clock.tick(60)
 		pygame.display.update()
 
 if __name__ == '__main__':
