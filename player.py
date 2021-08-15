@@ -1,7 +1,7 @@
 import pygame
 import os
 from globals import *
-import math
+
 class Player(pygame.sprite.Sprite):
 
     heroPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
@@ -37,8 +37,8 @@ class Player(pygame.sprite.Sprite):
 
         animationFilesList = []
 
+        #TODO: ADD CONVERT_ALPHA
         for animationFilesName in animationFilesNamesList:
-            #animationFilesList.append(pygame.image.load(os.path.join(heroPath, animationFolder, str(animationFilesName) + '.png')).convert())
             animationFilesList.append(pygame.image.load(os.path.join(heroPath, animationFolder, str(animationFilesName) + '.png')))
 
 
@@ -52,27 +52,28 @@ class Player(pygame.sprite.Sprite):
     }
 
 
-
     #keeps -MAX_ACCELERATION < ax, ay < MAX_ACCELERATION
     def normalizeAcceleration(self):
-        if self.ax < 0 and abs(self.ax) > MAX_ACCELERATION:
+        if self.ax < -MAX_ACCELERATION:
             self.ax = -MAX_ACCELERATION
-        elif self.ax > 0 and abs(self.ax) > MAX_ACCELERATION:
+        elif self.ax > MAX_ACCELERATION:
             self.ax = MAX_ACCELERATION
-        if self.ay < 0 and abs(self.ay) > MAX_ACCELERATION:
+        
+        if self.ay < -MAX_ACCELERATION:
             self.ay = -MAX_ACCELERATION
-        elif self.ay > 0 and abs(self.ay) > MAX_ACCELERATION:
+        elif self.ay > MAX_ACCELERATION:
             self.ay = MAX_ACCELERATION
 
     #keeps -MAX_VELOCITY < vx, vy < MAX_VELOCITY
     def normalizeVelocity(self):
-        if self.vx < 0 and abs(self.vx) > MAX_VELOCITY:
+        if self.vx < -MAX_VELOCITY:
             self.vx = -MAX_VELOCITY
-        elif self.vx > 0 and abs(self.vx) > MAX_VELOCITY:
+        elif self.vx > MAX_VELOCITY:
             self.vx = MAX_VELOCITY
-        if self.vy < 0 and abs(self.vy) > MAX_VELOCITY:
+        
+        if self.vy < -MAX_VELOCITY:
             self.vy = -MAX_VELOCITY
-        elif self.vy > 0 and abs(self.vy) > MAX_VELOCITY:
+        elif self.vy > MAX_VELOCITY:
             self.vy = MAX_VELOCITY
 
     #simulate friction by reducing/increasing ax by a damping constant
@@ -180,41 +181,39 @@ class Player(pygame.sprite.Sprite):
         else:
             self.animationFrame += 1
 
-    #checks if we should change the animation for the player
-    def checkAnimationChange(self):
-        #dummy value for initialization
-        newAnimation = self.currentAnmiation
-
-        #run animation
-        if self.vx != 0:
-            newAnimation = 'run'
-            
-            #check if this is a transition to a new animation
-            if newAnimation != self.currentAnmiation:
-                self.currentAnmiation = newAnimation
-                self.animationFrame = 0
-            
-            self.image = self.animations[self.currentAnmiation][self.animationFrame]
-            
-            #TODO: THIS BREAKS WHEN AX HITS 0 AND CAUSES THE GUY TO TURN AROUND
-            #flip image if we are running left
-            if self.horizontalFlip:
-                self.image = pygame.transform.flip(self.image, True, False)
-                
-        else:
-            newAnimation = 'idle'
-            if newAnimation != self.currentAnmiation:
-                self.currentAnmiation = newAnimation
-                self.animationFrame = 0
-
-    def updatePlayerAnimation(self):
-
-
-        self.incrementAnimationFrame()
+    #check if this is a transition to a new animation
+    def checkAndSetNewAnimation(self, newAnimation):
+        
+        if newAnimation != self.currentAnmiation:
+            self.currentAnmiation = newAnimation
+            self.animationFrame = 0
 
         self.image = self.animations[self.currentAnmiation][self.animationFrame]
 
-        self.checkAnimationChange()
+    #flip image if we are running left
+    def handleHorizontalFlip(self):
+        if self.horizontalFlip:
+            self.image = pygame.transform.flip(self.image, True, False)
+
+    #checks if we should change the animation for the player
+    def handleAnimationChange(self):
+        self.image = self.animations[self.currentAnmiation][self.animationFrame]
+
+        #run animation
+        if self.vx != 0:
+            self.checkAndSetNewAnimation('run')
+            self.handleHorizontalFlip()
+                
+        else:
+            self.checkAndSetNewAnimation('idle')
+
+            self.handleHorizontalFlip()
+
+    def updatePlayerAnimation(self):
+
+        self.incrementAnimationFrame()
+
+        self.handleAnimationChange()
 
         self.createImageRect()
 
