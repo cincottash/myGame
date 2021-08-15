@@ -2,11 +2,24 @@ import pygame
 import os
 from globals import *
 
+def loadAnimationFiles(screen, entityAssetsPath, animationFolder):
+        animationFilesNamesList = [int(num[0]) for num in os.listdir(os.path.join(entityAssetsPath, animationFolder))]
+        animationFilesNamesList.sort()
+
+        animationFilesList = []
+
+        #TODO: ADD CONVERT_ALPHA
+        for animationFilesName in animationFilesNamesList:
+            animationFilesList.append(pygame.image.load(os.path.join(entityAssetsPath, animationFolder, str(animationFilesName) + '.png')).convert_alpha())
+
+
+        return animationFilesList
 
 def pygameSetup():
 
-	pygame.init()
+	heroAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
 
+	pygame.init()
 
 	clock = pygame.time.Clock()
 
@@ -23,4 +36,10 @@ def pygameSetup():
 
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-	return screen, backgroundImages, clock
+	#has a list of all the files used for each animaitons	
+	heroAnimations = {
+        'idle': loadAnimationFiles(screen, heroAssetsPath, 'idle'),
+        'run': loadAnimationFiles(screen, heroAssetsPath, 'run')
+    }
+
+	return screen, backgroundImages, clock, heroAnimations

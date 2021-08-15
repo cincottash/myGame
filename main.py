@@ -2,12 +2,12 @@ from setup import *
 from player import *
 
 def main():
-	screen, backgroundImages, clock = pygameSetup()
+	screen, backgroundImages, clock, heroAnimations = pygameSetup()
 	
 	done = False
 
 	playerSpriteGroup = pygame.sprite.Group()
-	player = Player()
+	player = Player(heroAnimations)
 	playerSpriteGroup.add(player)
 	
 	while(not done):

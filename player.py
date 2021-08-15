@@ -4,9 +4,7 @@ from globals import *
 
 class Player(pygame.sprite.Sprite):
 
-    heroPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
-
-    def __init__(self):
+    def __init__(self, animations):
         super(Player, self).__init__()
 
         self.horizontalFlip = False
@@ -23,33 +21,14 @@ class Player(pygame.sprite.Sprite):
 
         self.animationFrame = 0
 
+        self.animations = animations
+
         self.image = self.animations[self.currentAnmiation][0]
 
         self.rect = self.image.get_rect()
 
         self.rect.centerx = SCREEN_WIDTH/2
         self.rect.centery = SCREEN_HEIGHT/2
-
-    
-    def loadAnimationFiles(heroPath, animationFolder):
-        animationFilesNamesList = [int(num[0]) for num in os.listdir(os.path.join(heroPath, animationFolder))]
-        animationFilesNamesList.sort()
-
-        animationFilesList = []
-
-        #TODO: ADD CONVERT_ALPHA
-        for animationFilesName in animationFilesNamesList:
-            animationFilesList.append(pygame.image.load(os.path.join(heroPath, animationFolder, str(animationFilesName) + '.png')))
-
-
-        return animationFilesList
-        
-
-    #has a list of all the files used for each animaitons
-    animations = {
-        'idle': loadAnimationFiles(heroPath, 'idle'),
-        'run': loadAnimationFiles(heroPath, 'run')
-    }
 
 
     #keeps -MAX_ACCELERATION < ax, ay < MAX_ACCELERATION
@@ -204,8 +183,8 @@ class Player(pygame.sprite.Sprite):
 
         '''
     
-        check what animation we should be running
-        check if we are running that animation
+        check what animation we should be showing
+        check if we are showing that animation
         if not, update self.currentAnimation, reset self.animationFrame, and update self.image
 
         '''
@@ -214,16 +193,14 @@ class Player(pygame.sprite.Sprite):
             
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
-
-            self.handleHorizontalFlip()
-                
+        
         else:
             animation = 'idle'
             
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
 
-            self.handleHorizontalFlip()
+        self.handleHorizontalFlip()
 
     def updatePlayerAnimation(self, keysPressed):
 
