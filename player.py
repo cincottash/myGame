@@ -3,29 +3,13 @@ import os
 from globals import *
 import math
 class Player(pygame.sprite.Sprite):
+
     heroPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
-
-    def loadAnimationFiles(heroPath, animationFolder):
-        animationFilesNamesList = [int(num[0]) for num in os.listdir(os.path.join(heroPath, animationFolder))]
-        animationFilesNamesList.sort()
-
-        animationFilesList = []
-
-        for animationFilesName in animationFilesNamesList:
-            animationFilesList.append(pygame.image.load(os.path.join(heroPath, animationFolder, str(animationFilesName) + '.png')))
-
-
-        return animationFilesList
-        
-
-    #has a list of all the files used for each animaitons
-    animations = {
-        'idle': loadAnimationFiles(heroPath, 'idle'),
-        'run': loadAnimationFiles(heroPath, 'run')
-    }
 
     def __init__(self):
         super(Player, self).__init__()
+
+        self.horizontalFlip = False
 
         self.vx = 0
 
@@ -46,51 +30,117 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = SCREEN_WIDTH/2
         self.rect.centery = SCREEN_HEIGHT/2
 
-    def handleHeroMovement(self, keysPressed):
-        if keysPressed[pygame.K_SPACE]:
-            self.ay = 0
-            self.ay -= 10
-            print('pressed space')
+    
+    def loadAnimationFiles(heroPath, animationFolder):
+        animationFilesNamesList = [int(num[0]) for num in os.listdir(os.path.join(heroPath, animationFolder))]
+        animationFilesNamesList.sort()
 
-        if keysPressed[pygame.K_a]:
-            self.ax -= 5
-            print('pressed a')
+        animationFilesList = []
 
-        if keysPressed[pygame.K_s]:
-            self.ay += 5
-            print('pressed s')
+        for animationFilesName in animationFilesNamesList:
+            #animationFilesList.append(pygame.image.load(os.path.join(heroPath, animationFolder, str(animationFilesName) + '.png')).convert())
+            animationFilesList.append(pygame.image.load(os.path.join(heroPath, animationFolder, str(animationFilesName) + '.png')))
 
-        if keysPressed[pygame.K_d]:
-            self.ax += 5
-            print('pressed d')
 
-        self.ay -= GRAVITY
+        return animationFilesList
+        
 
+    #has a list of all the files used for each animaitons
+    animations = {
+        'idle': loadAnimationFiles(heroPath, 'idle'),
+        'run': loadAnimationFiles(heroPath, 'run')
+    }
+
+
+
+    #keeps -MAX_ACCELERATION < ax, ay < MAX_ACCELERATION
+    def normalizeAcceleration(self):
         if self.ax < 0 and abs(self.ax) > MAX_ACCELERATION:
             self.ax = -MAX_ACCELERATION
-        if self.ax > 0 and abs(self.ax) > MAX_ACCELERATION:
+        elif self.ax > 0 and abs(self.ax) > MAX_ACCELERATION:
             self.ax = MAX_ACCELERATION
         if self.ay < 0 and abs(self.ay) > MAX_ACCELERATION:
             self.ay = -MAX_ACCELERATION
-        if self.ay > 0 and abs(self.ay) > MAX_ACCELERATION:
+        elif self.ay > 0 and abs(self.ay) > MAX_ACCELERATION:
             self.ay = MAX_ACCELERATION
 
-        self.vx += self.ax
-        self.vy += self.ay
-        
+    #keeps -MAX_VELOCITY < vx, vy < MAX_VELOCITY
+    def normalizeVelocity(self):
         if self.vx < 0 and abs(self.vx) > MAX_VELOCITY:
             self.vx = -MAX_VELOCITY
-        if self.vx > 0 and abs(self.vx) > MAX_VELOCITY:
+        elif self.vx > 0 and abs(self.vx) > MAX_VELOCITY:
             self.vx = MAX_VELOCITY
         if self.vy < 0 and abs(self.vy) > MAX_VELOCITY:
             self.vy = -MAX_VELOCITY
-        if self.vy > 0 and abs(self.vy) > MAX_VELOCITY:
+        elif self.vy > 0 and abs(self.vy) > MAX_VELOCITY:
             self.vy = MAX_VELOCITY
-        
-        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\n'.
-            format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width))
-        self.rect = self.rect.move(self.vx, self.vy)
 
+    #simulate friction by reducing/increasing ax by a damping constant
+    def dampenAcceleration(self, keysPressed):
+        if not(keysPressed[pygame.K_a] or keysPressed[pygame.K_d]):
+            
+            if self.ax < 0:
+                if(self.ax + DAMPING_CONSTANT_A >= 0):
+                    self.ax = 0
+                else:
+                    self.ax += DAMPING_CONSTANT_A
+            elif self.ax > 0:
+                if(self.ax - DAMPING_CONSTANT_A <= 0):
+                    self.ax = 0
+                else:
+                    self.ax -= DAMPING_CONSTANT_A
+
+    #simulate friction by reducing/increasing vx by a damping constant
+    def dampenVelocity(self, keysPressed):
+        #only dampen if we aren't pressing a move key
+        if not(keysPressed[pygame.K_a] or keysPressed[pygame.K_d]):
+            if self.vx < 0:
+                if(self.vx + DAMPING_CONSTANT_V >= 0):
+                    self.vx = 0
+                else:
+                    self.vx += DAMPING_CONSTANT_V
+            elif self.vx > 0:
+                if(self.vx - DAMPING_CONSTANT_V <= 0):
+                    self.vx = 0
+                else:
+                    self.vx -= DAMPING_CONSTANT_V
+
+    def handleKeyPress(self, keysPressed):
+        HERO_HEIGHT = self.rect.height
+
+        if keysPressed[pygame.K_SPACE]:
+            #check if we are on the ground, no mid air jumps
+            if(self.rect.centery == SCREEN_HEIGHT - HERO_HEIGHT/2):
+                self.ay = 0 
+                self.vy = -MAX_ACCELERATION
+
+        if keysPressed[pygame.K_a]:
+            self.ax -= 0.2 * MAX_ACCELERATION
+            self.horizontalFlip = True
+
+        if keysPressed[pygame.K_d]:
+            self.ax += 0.2 * MAX_ACCELERATION
+            self.horizontalFlip = False
+
+    def moveHero(self, keysPressed):
+        
+        self.handleKeyPress(keysPressed)
+
+        self.ay -= GRAVITY
+
+        self.normalizeAcceleration()
+        self.dampenAcceleration(keysPressed)
+        
+        self.vx += self.ax
+        self.vy += self.ay
+
+        self.normalizeVelocity()
+        self.dampenVelocity(keysPressed)
+
+        
+        #updates the rects coords
+        self.rect = self.rect.move(self.vx, self.vy)
+        
     def keepHeroOnScreen(self):
         HERO_HEIGHT = self.rect.height
         HERO_WIDTH = self.rect.width
@@ -107,16 +157,12 @@ class Player(pygame.sprite.Sprite):
         if self.rect.centerx + HERO_WIDTH/2 > SCREEN_WIDTH:
             self.rect.centerx = SCREEN_WIDTH - HERO_WIDTH/2
 
-    def updateAnimation(self):
+        
 
-        #check if we are at end of animation 
-        if self.animationFrame == len(self.animations[self.currentAnmiation]) - 1:
-            self.animationFrame = 0
-        else:
-            self.animationFrame += 1
+        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\n'.
+            format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width))
 
-        self.image = self.animations[self.currentAnmiation][self.animationFrame]
-
+    def createImageRect(self):
         #keep track of old centerx and centery
         centerx = self.rect.centerx
         centery = self.rect.centery
@@ -126,11 +172,21 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery = centery
         self.rect.centerx = centerx
 
+    #go to the next animation frame or reset if at the last frame
+    def incrementAnimationFrame(self):
+        #check if we are at end of animation 
+        if self.animationFrame == len(self.animations[self.currentAnmiation]) - 1:
+            self.animationFrame = 0
+        else:
+            self.animationFrame += 1
+
+    #checks if we should change the animation for the player
+    def checkAnimationChange(self):
         #dummy value for initialization
         newAnimation = self.currentAnmiation
 
         #run animation
-        if self.vx != 0 or self.vy != 0:
+        if self.vx != 0:
             newAnimation = 'run'
             
             #check if this is a transition to a new animation
@@ -140,8 +196,9 @@ class Player(pygame.sprite.Sprite):
             
             self.image = self.animations[self.currentAnmiation][self.animationFrame]
             
+            #TODO: THIS BREAKS WHEN AX HITS 0 AND CAUSES THE GUY TO TURN AROUND
             #flip image if we are running left
-            if self.ax < 0:
+            if self.horizontalFlip:
                 self.image = pygame.transform.flip(self.image, True, False)
                 
         else:
@@ -150,11 +207,22 @@ class Player(pygame.sprite.Sprite):
                 self.currentAnmiation = newAnimation
                 self.animationFrame = 0
 
+    def updatePlayerAnimation(self):
+
+
+        self.incrementAnimationFrame()
+
+        self.image = self.animations[self.currentAnmiation][self.animationFrame]
+
+        self.checkAnimationChange()
+
+        self.createImageRect()
+
     def update(self, keysPressed):
 
-        self.handleHeroMovement(keysPressed)
+        self.moveHero(keysPressed)
 
-        self.updateAnimation()
+        self.updatePlayerAnimation()
 
         self.keepHeroOnScreen()
         
