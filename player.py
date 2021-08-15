@@ -76,6 +76,8 @@ class Player(pygame.sprite.Sprite):
         elif self.vy > MAX_VELOCITY:
             self.vy = MAX_VELOCITY
 
+    #TODO: DAMPEN AY,VY SO WE CAN PROPERLY HANDLE JUMPS
+
     #simulate friction by reducing/increasing ax by a damping constant
     def dampenAcceleration(self, keysPressed):
         if not(keysPressed[pygame.K_a] or keysPressed[pygame.K_d]):
@@ -181,12 +183,13 @@ class Player(pygame.sprite.Sprite):
         else:
             self.animationFrame += 1
 
-    #check if this is a transition to a new animation
-    def checkAndSetNewAnimation(self, newAnimation):
-        
-        if newAnimation != self.currentAnmiation:
-            self.currentAnmiation = newAnimation
-            self.animationFrame = 0
+    def checkAnimation(self, animation):
+        return animation == self.currentAnmiation
+
+    def setAnimation(self, animation):
+            
+        self.currentAnmiation = animation
+        self.animationFrame = 0
 
         self.image = self.animations[self.currentAnmiation][self.animationFrame]
 
@@ -196,24 +199,37 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
 
     #checks if we should change the animation for the player
-    def handleAnimationChange(self):
+    def handleAnimationChange(self, keysPressed):
         self.image = self.animations[self.currentAnmiation][self.animationFrame]
 
-        #run animation
-        if self.vx != 0:
-            self.checkAndSetNewAnimation('run')
+        '''
+    
+        check what animation we should be running
+        check if we are running that animation
+        if not, update self.currentAnimation, reset self.animationFrame, and update self.image
+
+        '''
+        if keysPressed[pygame.K_d] or keysPressed[pygame.K_a]:
+            animation = 'run'
+            
+            if not self.checkAnimation(animation):
+                self.setAnimation(animation)
+
             self.handleHorizontalFlip()
                 
         else:
-            self.checkAndSetNewAnimation('idle')
+            animation = 'idle'
+            
+            if not self.checkAnimation(animation):
+                self.setAnimation(animation)
 
             self.handleHorizontalFlip()
 
-    def updatePlayerAnimation(self):
+    def updatePlayerAnimation(self, keysPressed):
 
         self.incrementAnimationFrame()
 
-        self.handleAnimationChange()
+        self.handleAnimationChange(keysPressed)
 
         self.createImageRect()
 
@@ -221,7 +237,7 @@ class Player(pygame.sprite.Sprite):
 
         self.moveHero(keysPressed)
 
-        self.updatePlayerAnimation()
+        self.updatePlayerAnimation(keysPressed)
 
         self.keepHeroOnScreen()
         
