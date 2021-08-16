@@ -16,6 +16,7 @@ def main():
 		for event in pygame.event.get():
 			#Enter will exit the test
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+				pygame.quit()
 				done = True
 			elif event.type == pygame.QUIT:
 				pygame.quit()
@@ -30,7 +31,7 @@ def main():
 		
 		playerSpriteGroup.draw(screen)
 
-		clock.tick(60)
+		clock.tick(120)
 		pygame.display.update()
 
 if __name__ == '__main__':

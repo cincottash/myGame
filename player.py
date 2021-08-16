@@ -90,11 +90,11 @@ class Player(pygame.sprite.Sprite):
     def handleKeyPress(self, keysPressed):
         HERO_HEIGHT = self.rect.height
 
-        if keysPressed[pygame.K_SPACE]:
+        if keysPressed[pygame.K_w]:
             #check if we are on the ground, no mid air jumps
             if(self.rect.centery == SCREEN_HEIGHT - HERO_HEIGHT/2):
                 self.ay = 0 
-                self.vy = -MAX_ACCELERATION
+                self.vy = -MAX_VELOCITY
 
         if keysPressed[pygame.K_a]:
             self.ax -= 0.2 * MAX_ACCELERATION
@@ -127,32 +127,36 @@ class Player(pygame.sprite.Sprite):
         HERO_HEIGHT = self.rect.height
         HERO_WIDTH = self.rect.width
 
+        #top
         if self.rect.centery - HERO_HEIGHT/2 < 0:
             self.rect.centery =  0 + HERO_HEIGHT/2
         
+        #Left
         if self.rect.centerx - HERO_WIDTH/2 < 0:
             self.rect.centerx = 0 + HERO_WIDTH/2
         
+        #Bottom
         if self.rect.centery + HERO_HEIGHT/2 > SCREEN_HEIGHT:
             self.rect.centery = SCREEN_HEIGHT - HERO_HEIGHT/2
         
+        #Right
         if self.rect.centerx + HERO_WIDTH/2 > SCREEN_WIDTH:
             self.rect.centerx = SCREEN_WIDTH - HERO_WIDTH/2
 
         
+    def createImageRect(self):
+        #keep track of old botomleft
+
+        #THE NEW RECTS SHOULD HAVE THE SAME BOTTOMLEFT COORDS
+        bottomLeft = self.rect.bottomleft
+
+        #the new image we just assigned might have a different size than the previous image, better update the rect
+        self.rect = self.image.get_rect()
+
+        self.rect.bottomleft = bottomLeft
 
         print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\n'.
             format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width))
-
-    def createImageRect(self):
-        #keep track of old centerx and centery
-        centerx = self.rect.centerx
-        centery = self.rect.centery
-        
-        #the new image we just assigned might have a different size than the previous image, better update the rect
-        self.rect = self.image.get_rect()
-        self.rect.centery = centery
-        self.rect.centerx = centerx
 
     #go to the next animation frame or reset if at the last frame
     def incrementAnimationFrame(self):
@@ -177,10 +181,21 @@ class Player(pygame.sprite.Sprite):
         if self.horizontalFlip:
             self.image = pygame.transform.flip(self.image, True, False)
 
+    def standingOnObject(self):
+        HERO_HEIGHT = self.rect.height
+
+        #is he on the floor?
+        if self.rect.centery == int(SCREEN_HEIGHT - HERO_HEIGHT/2):
+            return True
+        return False
+
     #checks if we should change the animation for the player
     def handleAnimationChange(self, keysPressed):
         self.image = self.animations[self.currentAnmiation][self.animationFrame]
 
+        #check if hero is standing on something or if he is falling
+
+        
         '''
     
         check what animation we should be showing
@@ -188,19 +203,35 @@ class Player(pygame.sprite.Sprite):
         if not, update self.currentAnimation, reset self.animationFrame, and update self.image
 
         '''
+        if not (keysPressed[pygame.K_d] or keysPressed[pygame.K_a]):
+            animation = 'idle'
+            
+            if not self.checkAnimation(animation):
+                self.setAnimation(animation)
+
+        
         if keysPressed[pygame.K_d] or keysPressed[pygame.K_a]:
             animation = 'run'
             
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
         
-        else:
-            animation = 'idle'
-            
+        #handle jumping condition
+        if self.vy < 0:
+            animation = 'jump_rise'
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
 
+        #IF HE IS NOT STANDING ON SOMETHING AND VY > 0
+        if not self.standingOnObject() and self.vy > 0:
+            animation = 'jump_fall'
+            if not self.checkAnimation(animation):
+                self.setAnimation(animation)
+
+        
         self.handleHorizontalFlip()
+
+        
 
     def updatePlayerAnimation(self, keysPressed):
 
@@ -214,9 +245,11 @@ class Player(pygame.sprite.Sprite):
 
         self.moveHero(keysPressed)
 
+        self.keepHeroOnScreen()
+
         self.updatePlayerAnimation(keysPressed)
 
-        self.keepHeroOnScreen()
+        
         
 
 

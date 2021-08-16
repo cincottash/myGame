@@ -39,7 +39,10 @@ def pygameSetup():
 	#has a list of all the files used for each animaitons	
 	heroAnimations = {
         'idle': loadAnimationFiles(screen, heroAssetsPath, 'idle'),
-        'run': loadAnimationFiles(screen, heroAssetsPath, 'run')
+        'run': loadAnimationFiles(screen, heroAssetsPath, 'run'),
+        'jump_rise': loadAnimationFiles(screen, heroAssetsPath, 'jump_rise'),
+        'jump_mid': loadAnimationFiles(screen, heroAssetsPath, 'jump_mid'),
+        'jump_fall': loadAnimationFiles(screen, heroAssetsPath, 'jump_fall')
     }
 
 	return screen, backgroundImages, clock, heroAnimations
