@@ -134,6 +134,10 @@ class Player(pygame.sprite.Sprite):
         #Left
         if self.rect.centerx - HERO_WIDTH/2 < 0:
             self.rect.centerx = 0 + HERO_WIDTH/2
+            
+            #let us instantly turn around if we're at the edge of the map
+            self.ax = 0
+            self.vx = 0
         
         #Bottom
         if self.rect.centery + HERO_HEIGHT/2 > SCREEN_HEIGHT:
@@ -142,6 +146,10 @@ class Player(pygame.sprite.Sprite):
         #Right
         if self.rect.centerx + HERO_WIDTH/2 > SCREEN_WIDTH:
             self.rect.centerx = SCREEN_WIDTH - HERO_WIDTH/2
+            
+            #let us instantly turn around if we're at the edge of the map
+            self.ax = 0
+            self.vx = 0
 
         
     def createImageRect(self):
@@ -189,30 +197,25 @@ class Player(pygame.sprite.Sprite):
             return True
         return False
 
-    #checks if we should change the animation for the player
-    def handleAnimationChange(self, keysPressed):
-        self.image = self.animations[self.currentAnmiation][self.animationFrame]
-
-        #check if hero is standing on something or if he is falling
-
-        
-        '''
+    '''
     
         check what animation we should be showing
         check if we are showing that animation
         if not, update self.currentAnimation, reset self.animationFrame, and update self.image
 
-        '''
+    '''
+
+    def handleAnimationChange(self, keysPressed):
+        self.image = self.animations[self.currentAnmiation][self.animationFrame]
+        
         if not (keysPressed[pygame.K_d] or keysPressed[pygame.K_a]):
             animation = 'idle'
-            
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
 
         
         if keysPressed[pygame.K_d] or keysPressed[pygame.K_a]:
             animation = 'run'
-            
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
         
