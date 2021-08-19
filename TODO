@@ -1,7 +1,3 @@
 TODO:
 
-BUG IN CREATE RECT FUNC
-
-Char moves slightly when facing the left, his animation is also messed up when facing that direction
-
-stuff messed up when hitting the right wall, he gets reset to the wrong position (works on the left side tho?)
+add collision handling for blocks

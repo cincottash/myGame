@@ -18,6 +18,8 @@ def pygameSetup():
 	heroAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
 	blockAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/blocks/'
 	backgroundAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/background/'
+	musicPath = '/home/cincottash/Documents/codingProjects/myGame/audio/'
+	
 	pygame.init()
 
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -46,5 +48,7 @@ def pygameSetup():
         'jump_rise': loadEntityAnimationFiles(screen, heroAssetsPath, 'jump_rise'),
         'jump_fall': loadEntityAnimationFiles(screen, heroAssetsPath, 'jump_fall')
     }
+
+	pygame.mixer.music.load(os.path.join(musicPath, 'introSong.wav'))
 
 	return screen, backgroundImages, clock, heroAnimations, blockImages
