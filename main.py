@@ -1,15 +1,21 @@
 from setup import *
 from player import *
+from block import *
 
 def main():
-	screen, backgroundImages, clock, heroAnimations = pygameSetup()
+	screen, backgroundImages, clock, heroAnimations, blockImages = pygameSetup()
 	
 	done = False
 
 	playerSpriteGroup = pygame.sprite.Group()
 	player = Player(heroAnimations)
 	playerSpriteGroup.add(player)
-	
+
+	blocksSpriteGroup = pygame.sprite.Group()
+	grassBlock = Block(blockImages['grass'])
+	blocksSpriteGroup.add(grassBlock)
+
+
 	while(not done):
 
 		
@@ -24,14 +30,18 @@ def main():
 
 		keysPressed = pygame.key.get_pressed()
 
+		blocksSpriteGroup.update()
 		playerSpriteGroup.update(keysPressed)
+		
 
 		for image in backgroundImages:
 			screen.blit(image, (0,0))
 		
+		blocksSpriteGroup.draw(screen)
 		playerSpriteGroup.draw(screen)
+		
 
-		clock.tick(120)
+		clock.tick(60)
 		pygame.display.update()
 
 if __name__ == '__main__':

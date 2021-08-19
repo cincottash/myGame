@@ -17,6 +17,10 @@ class Player(pygame.sprite.Sprite):
 
         self.ay = 0
 
+        self.atLeftEdge = False
+
+        self.atRightEdge = False
+
         self.currentAnmiation = 'idle'
 
         self.animationFrame = 0
@@ -54,8 +58,6 @@ class Player(pygame.sprite.Sprite):
             self.vy = -MAX_VELOCITY
         elif self.vy > MAX_VELOCITY:
             self.vy = MAX_VELOCITY
-
-    #TODO: DAMPEN AY,VY SO WE CAN PROPERLY HANDLE JUMPS
 
     #simulate friction by reducing/increasing ax by a damping constant
     def dampenAcceleration(self, keysPressed):
@@ -127,44 +129,53 @@ class Player(pygame.sprite.Sprite):
         HERO_HEIGHT = self.rect.height
         HERO_WIDTH = self.rect.width
 
+        self.atLeftEdge = self.atRightEdge = False
+
         #top
-        if self.rect.centery - HERO_HEIGHT/2 < 0:
-            self.rect.centery =  0 + HERO_HEIGHT/2
+        if self.rect.top < 0:
+            self.rect.top = 0
         
         #Left
-        if self.rect.centerx - HERO_WIDTH/2 < 0:
-            self.rect.centerx = 0 + HERO_WIDTH/2
+        if self.rect.left < 0:
+            self.rect.left = 0
+
+            #let us instantly turn around if we're at the edge of the map
+            self.ax = 0
+            self.vx = 0
+
+            self.atLeftEdge = True
+        #Right
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
             
             #let us instantly turn around if we're at the edge of the map
             self.ax = 0
             self.vx = 0
+
+            self.atRightEdge = True
         
         #Bottom
-        if self.rect.centery + HERO_HEIGHT/2 > SCREEN_HEIGHT:
-            self.rect.centery = SCREEN_HEIGHT - HERO_HEIGHT/2
+        if self.rect.bottom > SCREEN_HEIGHT:
+            self.rect.bottom = SCREEN_HEIGHT
         
-        #Right
-        if self.rect.centerx + HERO_WIDTH/2 > SCREEN_WIDTH:
-            self.rect.centerx = SCREEN_WIDTH - HERO_WIDTH/2
-            
-            #let us instantly turn around if we're at the edge of the map
-            self.ax = 0
-            self.vx = 0
-
-        
+    #the new image we just assigned might have a different size than the previous image, better update the rect
     def createImageRect(self):
-        #keep track of old botomleft
+        if self.atLeftEdge:
+            bottomLeft= self.rect.bottomleft
 
-        #THE NEW RECTS SHOULD HAVE THE SAME BOTTOMLEFT COORDS
-        bottomLeft = self.rect.bottomleft
+            self.rect = self.image.get_rect()
 
-        #the new image we just assigned might have a different size than the previous image, better update the rect
-        self.rect = self.image.get_rect()
+            self.rect.bottomleft = bottomLeft
+            
+        else:
+            bottomRight = self.rect.bottomright
 
-        self.rect.bottomleft = bottomLeft
+            self.rect = self.image.get_rect()
 
-        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\n'.
-            format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width))
+            self.rect.bottomright = bottomRight
+
+        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\ndistance from right edge: {}\ndistance from left edge: {}\n'.
+            format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width, SCREEN_WIDTH - self.rect.right, self.rect.left))
 
     #go to the next animation frame or reset if at the last frame
     def incrementAnimationFrame(self):
