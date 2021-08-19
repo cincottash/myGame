@@ -33,7 +33,7 @@ def main():
 		keysPressed = pygame.key.get_pressed()
 
 		blocksSpriteGroup.update()
-		playerSpriteGroup.update(keysPressed)
+		playerSpriteGroup.update(keysPressed, blocksSpriteGroup)
 		
 
 		for image in backgroundImages:

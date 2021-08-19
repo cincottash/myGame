@@ -125,9 +125,11 @@ class Player(pygame.sprite.Sprite):
         #updates the rects coords
         self.rect = self.rect.move(self.vx, self.vy)
         
-    def keepHeroOnScreen(self):
+    def checkCollision(self, blocksSpriteGroup):
         HERO_HEIGHT = self.rect.height
         HERO_WIDTH = self.rect.width
+
+        #CHECK IF WE'RE AT BORDER (L/R) OF SCREEN
 
         self.atLeftEdge = self.atRightEdge = False
 
@@ -157,6 +159,11 @@ class Player(pygame.sprite.Sprite):
         #Bottom
         if self.rect.bottom > SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+
+        #TODO: check for collison with blocks
+        for block in blocksSpriteGroup:
+            if pygame.sprite.collide_rect(block, self):
+                print('collide!\n')
         
     #the new image we just assigned might have a different size than the previous image, better update the rect
     def createImageRect(self):
@@ -166,7 +173,7 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
 
             self.rect.bottomleft = bottomLeft
-            
+
         else:
             bottomRight = self.rect.bottomright
 
@@ -255,13 +262,14 @@ class Player(pygame.sprite.Sprite):
 
         self.createImageRect()
 
-    def update(self, keysPressed):
+    def update(self, keysPressed, blocksSpriteGroup):
 
         self.moveHero(keysPressed)
 
-        self.keepHeroOnScreen()
+        self.checkCollision(blocksSpriteGroup)
 
         self.updatePlayerAnimation(keysPressed)
+
 
         
         
