@@ -16,7 +16,7 @@ def main():
 	blocksSpriteGroup.add(grassBlock)
 
 	#play random song to show how music works
-	pygame.mixer.music.play(-1)
+	#pygame.mixer.music.play(-1)
 
 	while(not done):
 

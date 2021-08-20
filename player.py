@@ -126,19 +126,16 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.rect.move(self.vx, self.vy)
         
     def checkCollision(self, blocksSpriteGroup):
-        HERO_HEIGHT = self.rect.height
-        HERO_WIDTH = self.rect.width
 
         #CHECK IF WE'RE AT BORDER (L/R) OF SCREEN
-
         self.atLeftEdge = self.atRightEdge = False
 
         #top
-        if self.rect.top < 0:
+        if self.rect.top <= 0:
             self.rect.top = 0
         
         #Left
-        if self.rect.left < 0:
+        if self.rect.left <= 0:
             self.rect.left = 0
 
             #let us instantly turn around if we're at the edge of the map
@@ -147,7 +144,7 @@ class Player(pygame.sprite.Sprite):
 
             self.atLeftEdge = True
         #Right
-        if self.rect.right > SCREEN_WIDTH:
+        if self.rect.right >= SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
             
             #let us instantly turn around if we're at the edge of the map
@@ -157,7 +154,7 @@ class Player(pygame.sprite.Sprite):
             self.atRightEdge = True
         
         #Bottom
-        if self.rect.bottom > SCREEN_HEIGHT:
+        if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
         #TODO: check for collison with blocks
@@ -167,9 +164,18 @@ class Player(pygame.sprite.Sprite):
         
     #the new image we just assigned might have a different size than the previous image, better update the rect
     def createImageRect(self):
+
+        # centerx = self.rect.centerx
+        # centery = self.rect.centery
+
+        # self.rect = self.image.get_rect()
+
+        # self.rect.centerx = centerx
+        # self.rect.centery = centery
+
         if self.atLeftEdge:
             bottomLeft= self.rect.bottomleft
-
+            
             self.rect = self.image.get_rect()
 
             self.rect.bottomleft = bottomLeft
@@ -269,6 +275,7 @@ class Player(pygame.sprite.Sprite):
         self.checkCollision(blocksSpriteGroup)
 
         self.updatePlayerAnimation(keysPressed)
+
 
 
         
