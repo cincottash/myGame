@@ -32,14 +32,33 @@ class Player(pygame.sprite.Sprite):
 
     #keeps -MAX_ACCELERATION < ax, ay < MAX_ACCELERATION
     def normalizeAcceleration(self):
-        self.ax = min(abs(self.ax), MAX_ACCELERATION)*self.ax/abs(self.ax)
-        self.ay = min(abs(self.ay), MAX_ACCELERATION)*self.ay/abs(self.ay)
+        if self.ax < -MAX_ACCELERATION:
+            self.ax = -MAX_ACCELERATION
+        elif self.ax > MAX_ACCELERATION: 
+            self.ax = MAX_ACCELERATION
+
+        if self.ay > MAX_ACCELERATION:
+            self.ay = MAX_ACCELERATION
+        elif self.ay < -MAX_ACCELERATION:
+            self.ay = -MAX_ACCELERATION
+        # self.ax = min(abs(self.ax), MAX_ACCELERATION)*self.ax/abs(self.ax)
+        # self.ay = min(abs(self.ay), MAX_ACCELERATION)*self.ay/abs(self.ay)
 
 
     #keeps -MAX_VELOCITY < vx, vy < MAX_VELOCITY
     def normalizeVelocity(self):
-        self.ax = min(abs(self.ax), MAX_VELOCITY)*self.ax/abs(self.ax)
-        self.ay = min(abs(self.ay), MAX_VELOCITY)*self.ay/abs(self.ay)
+        if self.vx < -MAX_VELOCITY:
+            self.vx = -MAX_VELOCITY
+        elif self.vx > MAX_VELOCITY: 
+            self.vx = MAX_VELOCITY
+
+        if self.vy > MAX_VELOCITY:
+            self.vy = MAX_VELOCITY
+        elif self.vy < -MAX_VELOCITY:
+            self.vy = -MAX_VELOCITY
+
+        # self.vx = min(abs(self.vx), MAX_VELOCITY)*self.vx/abs(self.vx)
+        # self.vy = min(abs(self.vy), MAX_VELOCITY)*self.vy/abs(self.vy)
 
 
     #simulate friction by reducing/increasing ax by a damping constant
@@ -142,28 +161,22 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = SCREEN_HEIGHT
             self.atBottomEdge = True
 
-        #TODO: check for collison with blocks
+        # #TODO: check for collison with blocks
         for block in blocksSpriteGroup:
             if pygame.sprite.collide_rect(block, self):
-                print(self.rect.bottom)
-                print(block.rect.top)
-                if self.rect.bottom >= block.rect.top:
-                    self.atTopEdge = True
-                    self.rect.bottom = block.rect.top
-                    self.ay = 0
-                    self.vy = 0
-
-                elif(self.rect.right <= block.rect.right):
+                print('collide\n')
+                if(self.rect.right <= block.rect.left):
                     self.rect.right = block.rect.left
                     self.atRightEdge = True
                     self.ax = 0
                     self.vx = 0
 
-                elif self.rect.left >= block.rect.left:
-                    self.rect.left = block.rect.right
-                    self.atLeftEdge = True
-                    self.ax = 0
-                    self.vx = 0
+                # elif self.rect.left >= block.rect.left:
+                #     self.rect.left = block.rect.right
+                #     self.atLeftEdge = True
+                #     self.ax = 0
+                #     self.vx = 0
+
 
 
 
