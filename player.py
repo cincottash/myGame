@@ -17,6 +17,10 @@ class Player(pygame.sprite.Sprite):
 
         self.ay = 0
 
+        self.atTopEdge = False
+
+        self.atBottomEdge = False
+
         self.atLeftEdge = False
 
         self.atRightEdge = False
@@ -128,11 +132,12 @@ class Player(pygame.sprite.Sprite):
     def checkCollision(self, blocksSpriteGroup):
 
         #CHECK IF WE'RE AT BORDER (L/R) OF SCREEN
-        self.atLeftEdge = self.atRightEdge = False
+        self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
 
         #top
         if self.rect.top <= 0:
             self.rect.top = 0
+            self.atTopEdge = True
         
         #Left
         if self.rect.left <= 0:
@@ -156,22 +161,36 @@ class Player(pygame.sprite.Sprite):
         #Bottom
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+            self.atBottomEdge = True
 
         #TODO: check for collison with blocks
         for block in blocksSpriteGroup:
             if pygame.sprite.collide_rect(block, self):
-                print('collide!\n')
-        
+                print(self.rect.bottom)
+                print(block.rect.top)
+                if self.rect.bottom >= block.rect.top:
+                    self.atTopEdge = True
+                    self.rect.bottom = block.rect.top
+                    self.ay = 0
+                    self.vy = 0
+                    
+                elif(self.rect.right <= block.rect.right):
+                    self.rect.right = block.rect.left
+                    self.atRightEdge = True
+                    self.ax = 0
+                    self.vx = 0
+                    
+                elif self.rect.left >= block.rect.left:
+                    self.rect.left = block.rect.right
+                    self.atLeftEdge = True
+                    self.ax = 0
+                    self.vx = 0
+                
+                
+
+                    
     #the new image we just assigned might have a different size than the previous image, better update the rect
     def createImageRect(self):
-
-        # centerx = self.rect.centerx
-        # centery = self.rect.centery
-
-        # self.rect = self.image.get_rect()
-
-        # self.rect.centerx = centerx
-        # self.rect.centery = centery
 
         if self.atLeftEdge:
             bottomLeft= self.rect.bottomleft
@@ -180,12 +199,16 @@ class Player(pygame.sprite.Sprite):
 
             self.rect.bottomleft = bottomLeft
 
-        else:
+        elif self.atRightEdge:
             bottomRight = self.rect.bottomright
 
             self.rect = self.image.get_rect()
 
-            self.rect.bottomright = bottomRight
+            self.rect.bottomright = bottomRight 
+        #TOP
+        elif self.atTopEdge:
+            #print(self.rect.bottom)
+            
 
         print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\ndistance from right edge: {}\ndistance from left edge: {}\n'.
             format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width, SCREEN_WIDTH - self.rect.right, self.rect.left))
