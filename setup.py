@@ -15,10 +15,10 @@ def loadEntityAnimationFiles(screen, entityAssetsPath, animationFolder):
 
 def pygameSetup():
 
-	heroAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/hero/'
-	blockAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/blocks/'
-	backgroundAssetsPath = '/home/cincottash/Documents/codingProjects/myGame/assets/background/'
-	musicPath = '/home/cincottash/Documents/codingProjects/myGame/audio/'
+	heroAssetsPath = 'assets/hero/'
+	blockAssetsPath = 'assets/blocks/'
+	backgroundAssetsPath = 'assets/background/'
+	musicPath = 'audio/'
 	
 	pygame.init()
 

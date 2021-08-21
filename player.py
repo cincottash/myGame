@@ -207,8 +207,9 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottomright = bottomRight 
         #TOP
         elif self.atTopEdge:
+            pass
             #print(self.rect.bottom)
-            
+
 
         print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\ndistance from right edge: {}\ndistance from left edge: {}\n'.
             format(self.ax, self.vx, self.ay, self.vy, self.rect.centerx, self.rect.centery, self.rect.width, SCREEN_WIDTH - self.rect.right, self.rect.left))
