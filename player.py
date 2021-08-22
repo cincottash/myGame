@@ -107,13 +107,16 @@ class Player(pygame.sprite.Sprite):
                 self.ay = 0
                 self.vy = -MAX_VELOCITY
 
+        #TURN BUG HERE
+        if keysPressed[pygame.K_d]:
+            self.ax += 0.2 * MAX_ACCELERATION
+            self.horizontalFlip = False
+
         if keysPressed[pygame.K_a]:
             self.ax -= 0.2 * MAX_ACCELERATION
             self.horizontalFlip = True
 
-        if keysPressed[pygame.K_d]:
-            self.ax += 0.2 * MAX_ACCELERATION
-            self.horizontalFlip = False
+        
 
     def moveHero(self, keysPressed):
 
@@ -304,4 +307,6 @@ class Player(pygame.sprite.Sprite):
         self.updatePlayerAnimation(keysPressed)
 
         self.checkCollision(blocksSpriteGroup)
+
+
 

@@ -1,2 +1,7 @@
 TODO:
-fix look direction bug
+fix look direction bug in handleKeyPress
+
+
+sprite collisions
+	remember collide_rect doesn't check when they are equal, only overlapp
+	might have to make my own collison method
