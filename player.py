@@ -305,5 +305,3 @@ class Player(pygame.sprite.Sprite):
 
         self.checkCollision(blocksSpriteGroup)
 
-
-
