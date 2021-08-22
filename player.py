@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
 
     def resetMotionY(self):
         self.ay = self.vy = 0
-        
+
 
     def handleKeyPress(self, keysPressed):
         HERO_HEIGHT = self.rect.height
@@ -304,3 +304,6 @@ class Player(pygame.sprite.Sprite):
         self.updatePlayerAnimation(keysPressed)
 
         self.checkCollision(blocksSpriteGroup)
+
+
+
