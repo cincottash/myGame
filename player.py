@@ -138,12 +138,6 @@ class Player(pygame.sprite.Sprite):
         #CHECK IF WE'RE AT BORDER (L/R) OF SCREEN
         self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
 
-        #top
-        # if self.rect.top <= 0:
-        #     self.rect.top = 0
-        #     self.atTopEdge = True
-        #     self.resetMotionX()
-
         #Left
         if self.rect.left <= 0:
             self.rect.left = 0
@@ -161,10 +155,19 @@ class Player(pygame.sprite.Sprite):
 
             self.atRightEdge = True
         
+        #bottom
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
             self.atBottomEdge = True
+        #top
+        elif self.rect.top < 0:
+            self.rect.top = 0
+            self.atTopEdge = True
 
+        # if self.rect.left == 0:
+        #     self.atLeftEdge = True
+        # elif self.rect.right == SCREEN_WIDTH:
+        #     self.atRightEdge = True
         
             #self.resetMotionY()
 
@@ -180,48 +183,12 @@ class Player(pygame.sprite.Sprite):
                     
         #             self.resetMotionX()
                     
-
-        #         #LEFT EDGE
-        #         elif self.rect.left <= block.rect.right:
-        #             self.rect.left = block.rect.right
-        #             self.atLeftEdge = True
-                    
-        #             self.resetMotionX()
-                
-                # #JUMPING UP AND HITTING BOTTOM OF BLOCK\
-                # if self.rect.top <= block.rect.bottom:
-                #     self.rect.top = block.rect.bottom
-                #     self.atTopEdge = True
-                #     print('collide top\n')
-                #     #exit(0)
-                #     self.resetMotionY()
-            
-            #check if their coords are the exact same but not colliding
-            # elif self.rect.right == block.rect.left and not(self.rect.top > block.rect.bottom) and not(self.rect.bottom < block.rect.top):
-            #     self.rect.right = block.rect.left
-            #     self.atRightEdge = True
-                
-            #     self.resetMotionX()
-            
-            # elif self.rect.left == block.rect.right and not(self.rect.top > block.rect.bottom) and not(self.rect.bottom < block.rect.top):
-            #     self.rect.left = block.rect.right
-            #     self.atLeftEdge = True
-                
-            #     self.resetMotionX()
-            
-            # elif self.rect.top == block.rect.bottom and not(self.rect.right < block.rect.left) and not(self.rect.left < block.rect.right):
-            #     self.rect.top = block.rect.bottom
-            #     self.atTopEdge = True
-
-            #     self.resetMotionY()
-
-
     # the new image we just assigned might have a different size than the
     # previous image, better update the rect
     def createImageRect(self):
 
-        #CHANGING ORDER DOESN'T FIX IT
         if self.atRightEdge:
+            print('1\n')
             bottomRight = self.rect.bottomright
 
             self.rect = self.image.get_rect()
@@ -229,29 +196,22 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottomright = bottomRight
 
         elif self.atLeftEdge:
+            print('2\n')
             bottomLeft= self.rect.bottomleft
 
             self.rect = self.image.get_rect()
 
             self.rect.bottomleft = bottomLeft
-
-        
-        # elif self.atTopEdge:
-        #     print('Top edge\n')
-        #     top= self.rect.top
-
-        #     self.rect = self.image.get_rect()
-
-        #     self.rect.top = top
-
 
         #else it doesn't matter so just us the left edge
         else:
+            print('3\n')
             bottomLeft= self.rect.bottomleft
 
             self.rect = self.image.get_rect()
 
             self.rect.bottomleft = bottomLeft
+
 
 
 
