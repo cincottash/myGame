@@ -91,6 +91,12 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.vx -= DAMPING_CONSTANT_V
 
+    def resetMotionX(self):
+        self.ax = self.vx = 0
+
+    def resetMotionY(self):
+        self.ay = self.vy = 0
+
     def handleKeyPress(self, keysPressed):
         HERO_HEIGHT = self.rect.height
 
@@ -133,83 +139,123 @@ class Player(pygame.sprite.Sprite):
         self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
 
         #top
-        if self.rect.top <= 0:
-            self.rect.top = 0
-            self.atTopEdge = True
+        # if self.rect.top <= 0:
+        #     self.rect.top = 0
+        #     self.atTopEdge = True
+        #     self.resetMotionX()
 
         #Left
         if self.rect.left <= 0:
             self.rect.left = 0
 
             #let us instantly turn around if we're at the edge of the map
-            self.ax = 0
-            self.vx = 0
+            self.resetMotionX()
 
             self.atLeftEdge = True
         #Right
-        if self.rect.right >= SCREEN_WIDTH:
+        elif self.rect.right >= SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
 
             #let us instantly turn around if we're at the edge of the map
-            self.ax = 0
-            self.vx = 0
+            self.resetMotionX()
 
             self.atRightEdge = True
-
-        #Bottom
+        
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
             self.atBottomEdge = True
 
+        
+            #self.resetMotionY()
+
         # #TODO: check for collison with blocks
-        for block in blocksSpriteGroup:
-            if pygame.sprite.collide_rect(block, self):
-                print('collide\n')
-                if(self.rect.right <= block.rect.left):
-                    self.rect.right = block.rect.left
-                    self.atRightEdge = True
-                    self.ax = 0
-                    self.vx = 0
+        # for block in blocksSpriteGroup:
+        #     if pygame.sprite.collide_rect(block, self):
+        #         print('collide\n')
+                
+        #         #RIGHT EDGE
+        #         if self.rect.right >= block.rect.left:
+        #             self.rect.right = block.rect.left
+        #             self.atRightEdge = True
+                    
+        #             self.resetMotionX()
+                    
 
-                # elif self.rect.left >= block.rect.left:
-                #     self.rect.left = block.rect.right
-                #     self.atLeftEdge = True
-                #     self.ax = 0
-                #     self.vx = 0
+        #         #LEFT EDGE
+        #         elif self.rect.left <= block.rect.right:
+        #             self.rect.left = block.rect.right
+        #             self.atLeftEdge = True
+                    
+        #             self.resetMotionX()
+                
+                # #JUMPING UP AND HITTING BOTTOM OF BLOCK\
+                # if self.rect.top <= block.rect.bottom:
+                #     self.rect.top = block.rect.bottom
+                #     self.atTopEdge = True
+                #     print('collide top\n')
+                #     #exit(0)
+                #     self.resetMotionY()
+            
+            #check if their coords are the exact same but not colliding
+            # elif self.rect.right == block.rect.left and not(self.rect.top > block.rect.bottom) and not(self.rect.bottom < block.rect.top):
+            #     self.rect.right = block.rect.left
+            #     self.atRightEdge = True
+                
+            #     self.resetMotionX()
+            
+            # elif self.rect.left == block.rect.right and not(self.rect.top > block.rect.bottom) and not(self.rect.bottom < block.rect.top):
+            #     self.rect.left = block.rect.right
+            #     self.atLeftEdge = True
+                
+            #     self.resetMotionX()
+            
+            # elif self.rect.top == block.rect.bottom and not(self.rect.right < block.rect.left) and not(self.rect.left < block.rect.right):
+            #     self.rect.top = block.rect.bottom
+            #     self.atTopEdge = True
 
-
-
+            #     self.resetMotionY()
 
 
     # the new image we just assigned might have a different size than the
     # previous image, better update the rect
     def createImageRect(self):
 
-        if self.atLeftEdge:
+        #CHANGING ORDER DOESN'T FIX IT
+        if self.atRightEdge:
+            bottomRight = self.rect.bottomright
+
+            self.rect = self.image.get_rect()
+
+            self.rect.bottomright = bottomRight
+
+        elif self.atLeftEdge:
             bottomLeft= self.rect.bottomleft
 
             self.rect = self.image.get_rect()
 
             self.rect.bottomleft = bottomLeft
 
-        elif self.atRightEdge:
-            bottomRight = self.rect.bottomright
+        
+        # elif self.atTopEdge:
+        #     print('Top edge\n')
+        #     top= self.rect.top
+
+        #     self.rect = self.image.get_rect()
+
+        #     self.rect.top = top
+
+
+        #else it doesn't matter so just us the left edge
+        else:
+            bottomLeft= self.rect.bottomleft
 
             self.rect = self.image.get_rect()
 
-            self.rect.bottomright = bottomRight
-        #TOP
-        elif self.atTopEdge:
-            pass
-            #print(self.rect.bottom)
+            self.rect.bottomleft = bottomLeft
 
 
-        print('ax:{}\nvx:{}\nay:{}\nvy:{}\ncenterx:{}\ncentery:{}\n:heroWidth:{}\ndistance from right edge: {}\ndistance from left edge: {}\n'.
-            format(
-                self.ax, self.vx, self.ay, self.vy, self.rect.centerx,
-                self.rect.centery, self.rect.width,
-                SCREEN_WIDTH - self.rect.right, self.rect.left)
-                )
+
+        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natLeftEdge:{self.atLeftEdge}\natRightEdge:{self.atRightEdge}\natTopEdge:{self.atTopEdge}\natBottomEdge:{self.atBottomEdge}\n')
 
     #go to the next animation frame or reset if at the last frame
     def incrementAnimationFrame(self):
@@ -238,7 +284,7 @@ class Player(pygame.sprite.Sprite):
         HERO_HEIGHT = self.rect.height
 
         #is he on the floor?
-        if self.rect.centery == int(SCREEN_HEIGHT - HERO_HEIGHT/2):
+        if self.rect.bottom >= SCREEN_HEIGHT:
             return True
         return False
 
