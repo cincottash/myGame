@@ -300,6 +300,6 @@ class Player(pygame.sprite.Sprite):
 
         self.moveHero(keysPressed)
 
-        self.checkCollision(blocksSpriteGroup)
-
         self.updatePlayerAnimation(keysPressed)
+
+        self.checkCollision(blocksSpriteGroup)

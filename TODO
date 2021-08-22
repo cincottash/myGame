@@ -1,6 +1,2 @@
 TODO:
-running when starting from left edge is messed up
-SOMETIMES THIS SHIT IS BROKE SOMETIMES IT ISNT^^^^^^^^^^^^^
-
-make my own collison method to fix that bug where
-the edge flags we're not staying triggered
+fix look direction bug
