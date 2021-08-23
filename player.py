@@ -14,10 +14,15 @@ class Player(pygame.sprite.Sprite):
         self.ax = 0
         self.ay = 0
 
-        self.atTopEdge = False
-        self.atBottomEdge = False
+        self.atRightEdgeOfMap = False
+        self.atLeftEdgeOfMap = False
+        self.atTopEdgeOfMap = False
+        self.atBottomEdgeOfMap = False
+
         self.atLeftEdge = False
         self.atRightEdge = False
+        self.atTopEdge = False
+        self.atBottomEdge = False
 
         self.currentAnmiation = 'idle'
         self.animationFrame = 0
@@ -137,11 +142,7 @@ class Player(pygame.sprite.Sprite):
         #updates the rects coords
         self.rect = self.rect.move(self.vx, self.vy)
 
-    def checkCollision(self, blocksSpriteGroup):
-
-        #CHECK IF WE'RE AT BORDER (L/R) OF SCREEN
-        self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
-
+    def checkBorderCollision(self):
         #Left
         if self.rect.left <= 0:
             self.rect.left = 0
@@ -149,7 +150,7 @@ class Player(pygame.sprite.Sprite):
             #let us instantly turn around if we're at the edge of the map
             self.resetMotionX()
 
-            self.atLeftEdge = True
+            self.atLeftEdgeOfMap = True
         #Right
         elif self.rect.right >= SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
@@ -157,69 +158,111 @@ class Player(pygame.sprite.Sprite):
             #let us instantly turn around if we're at the edge of the map
             self.resetMotionX()
 
-            self.atRightEdge = True
+            self.atRightEdgeOfMap = True
         
         #bottom
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
-            self.atBottomEdge = True
+            self.atBottomEdgeOfMap = True
         #top
         elif self.rect.top < 0:
             self.rect.top = 0
-            self.atTopEdge = True
+            self.atTopEdgeOfMap = True
 
-        # if self.rect.left == 0:
-        #     self.atLeftEdge = True
-        # elif self.rect.right == SCREEN_WIDTH:
-        #     self.atRightEdge = True
+    def checkBlockCollision(self, blocksSpriteGroup):
+        #TODO: check for collison with blocks
+        for block in blocksSpriteGroup:
         
-            #self.resetMotionY()
+            
+            # we are at the right edge if:
+            #     on left of block and
+            #     not on right of block and
+            #     not above of block and
+            #     not below block
 
-        # #TODO: check for collison with blocks
-        # for block in blocksSpriteGroup:
-        #     if pygame.sprite.collide_rect(block, self):
-        #         print('collide\n')
-                
-        #         #RIGHT EDGE
-        #         if self.rect.right >= block.rect.left:
-        #             self.rect.right = block.rect.left
-        #             self.atRightEdge = True
-                    
-        #             self.resetMotionX()
+            #HITTING THIS WHEN IT SHOULDN'T BE
+            if self.rect.right >= block.rect.left and(self.rect.left <= block.rect.left) and not(self.rect.left >= block.rect.right) and not(self.rect.bottom <= block.rect.top) and not(self.rect.top >= block.rect.bottom):
+                self.rect.right = block.rect.left
+                self.atRightEdge = True
+                self.resetMotionX()
+
+
+
+            
+            # we are at the left edge if:
+            #     on right of block and
+            #     not on left of block and
+            #     not above of block and
+            #     not below block
+            
+            elif self.rect.left <= block.rect.right and(self.rect.right >= block.rect.right) and not(self.rect.right <= block.rect.left) and not(self.rect.bottom <= block.rect.top)and not(self.rect.top >= block.rect.bottom):
+                self.rect.left = block.rect.right
+                self.atLeftEdge = True
+                self.resetMotionX()
+
+
+            # we are at the top edge if:
+            #     below block
+            #     not on right of block and
+            #     not on left of block and
+            #     not on top of block and
+
+            # elif self.rect.top <= block.rect.bottom and (self.rect.bottom >= block.rect.bottom) and not(self.rect.left >= block.rect.right) and not(self.rect.right <= block.rect.left) and not(self.rect.bottom <= block.rect.top):
+            #     self.rect.top = block.rect.bottom
+            #     self.atTopEdgeOfMap = True
+            #     self.resetMotionY()
+            # elif :
+            #     pass
+
+    def checkCollisions(self, blocksSpriteGroup):
+
+
+        self.atRightEdgeOfMap = self.atLeftEdgeOfMap = self.atTopEdgeOfMap = self.atBottomEdgeOfMap = self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
+
+        self.checkBorderCollision()
+        #self.checkBlockCollision(blocksSpriteGroup)
+
+        
                     
     # the new image we just assigned might have a different size than the
     # previous image, better update the rect
     def createImageRect(self):
 
-        if self.atRightEdge:
-            print('1\n')
-            bottomRight = self.rect.bottomright
+        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap):
 
-            self.rect = self.image.get_rect()
+            if self.atRightEdgeOfMap:
+                bottomRight = self.rect.bottomright
 
-            self.rect.bottomright = bottomRight
+                self.rect = self.image.get_rect()
 
-        elif self.atLeftEdge:
-            print('2\n')
-            bottomLeft= self.rect.bottomleft
+                self.rect.bottomright = bottomRight
 
-            self.rect = self.image.get_rect()
+            elif self.atLeftEdgeOfMap:
+                bottomLeft= self.rect.bottomleft
 
-            self.rect.bottomleft = bottomLeft
+                self.rect = self.image.get_rect()
 
-        #else it doesn't matter so just us the left edge
-        else:
-            print('3\n')
-            bottomLeft= self.rect.bottomleft
+                self.rect.bottomleft = bottomLeft
 
-            self.rect = self.image.get_rect()
+            elif self.atTopEdgeOfMap:
+                top = self.rect.top
 
-            self.rect.bottomleft = bottomLeft
+                self.rect = self.image.get_rect()
+
+                self.rect.top = top
+
+            #else we are the bottomEdgeOfMap
+            else:
+                bottomLeft= self.rect.bottomleft
+
+                self.rect = self.image.get_rect()
+
+                self.rect.bottomleft = bottomLeft
 
 
 
 
-        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natLeftEdge:{self.atLeftEdge}\natRightEdge:{self.atRightEdge}\natTopEdge:{self.atTopEdge}\natBottomEdge:{self.atBottomEdge}\n')
+        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natRightEdgeOfMap:{self.atRightEdgeOfMap}\natLeftEdgeOfMap:{self.atLeftEdgeOfMap}\natTopEdgeOfMap:{self.atTopEdgeOfMap}\natBottomEdgeOfMap:{self.atBottomEdgeOfMap}\natLeftEdge:{self.atLeftEdge}\natRightEdge:{self.atRightEdge}\natTopEdge{self.atTopEdge}\natBottomEdge:{self.atBottomEdge}\n')
 
     #go to the next animation frame or reset if at the last frame
     def incrementAnimationFrame(self):
@@ -306,7 +349,7 @@ class Player(pygame.sprite.Sprite):
 
         self.updatePlayerAnimation(keysPressed)
 
-        self.checkCollision(blocksSpriteGroup)
+        self.checkCollisions(blocksSpriteGroup)
 
 
 
