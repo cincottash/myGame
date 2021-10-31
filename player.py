@@ -62,10 +62,6 @@ class Player(pygame.sprite.Sprite):
         elif self.vy < -MAX_VELOCITY:
             self.vy = -MAX_VELOCITY
 
-        # self.vx = min(abs(self.vx), MAX_VELOCITY)*self.vx/abs(self.vx)
-        # self.vy = min(abs(self.vy), MAX_VELOCITY)*self.vy/abs(self.vy)
-
-
     #simulate friction by reducing/increasing ax by a damping constant
     def dampenAcceleration(self, keysPressed):
         if not(keysPressed[pygame.K_a] or keysPressed[pygame.K_d]):
@@ -112,7 +108,6 @@ class Player(pygame.sprite.Sprite):
                 self.ay = 0
                 self.vy = -MAX_VELOCITY
 
-        #TURN BUG HERE
         if keysPressed[pygame.K_d]:
             self.ax += 0.2 * MAX_ACCELERATION
             self.horizontalFlip = False
@@ -172,7 +167,6 @@ class Player(pygame.sprite.Sprite):
     def checkBlockCollision(self, blocksSpriteGroup):
         #TODO: check for collison with blocks
         for block in blocksSpriteGroup:
-        
             
             # we are at the right edge if:
             #     on left of block and
@@ -186,9 +180,6 @@ class Player(pygame.sprite.Sprite):
                 self.atRightEdge = True
                 self.resetMotionX()
 
-
-
-            
             # we are at the left edge if:
             #     on right of block and
             #     not on left of block and
@@ -199,7 +190,6 @@ class Player(pygame.sprite.Sprite):
                 self.rect.left = block.rect.right
                 self.atLeftEdge = True
                 self.resetMotionX()
-
 
             # we are at the top edge if:
             #     below block
@@ -251,13 +241,14 @@ class Player(pygame.sprite.Sprite):
 
                 self.rect.top = top
 
-            #else we are the bottomEdgeOfMap
+            #else we are the bottomEdgeOfMap or in the air so we can just do it from the bottom left
             else:
                 bottomLeft= self.rect.bottomleft
 
                 self.rect = self.image.get_rect()
 
                 self.rect.bottomleft = bottomLeft
+
 
 
 
