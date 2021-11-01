@@ -167,42 +167,8 @@ class Player(pygame.sprite.Sprite):
     def checkBlockCollision(self, blocksSpriteGroup):
         #TODO: check for collison with blocks
         for block in blocksSpriteGroup:
-            
-            # we are at the right edge if:
-            #     on left of block and
-            #     not on right of block and
-            #     not above of block and
-            #     not below block
-
-            #HITTING THIS WHEN IT SHOULDN'T BE
-            if self.rect.right >= block.rect.left and(self.rect.left <= block.rect.left) and not(self.rect.left >= block.rect.right) and not(self.rect.bottom <= block.rect.top) and not(self.rect.top >= block.rect.bottom):
-                self.rect.right = block.rect.left
-                self.atRightEdge = True
-                self.resetMotionX()
-
-            # we are at the left edge if:
-            #     on right of block and
-            #     not on left of block and
-            #     not above of block and
-            #     not below block
-            
-            elif self.rect.left <= block.rect.right and(self.rect.right >= block.rect.right) and not(self.rect.right <= block.rect.left) and not(self.rect.bottom <= block.rect.top)and not(self.rect.top >= block.rect.bottom):
-                self.rect.left = block.rect.right
-                self.atLeftEdge = True
-                self.resetMotionX()
-
-            # we are at the top edge if:
-            #     below block
-            #     not on right of block and
-            #     not on left of block and
-            #     not on top of block and
-
-            # elif self.rect.top <= block.rect.bottom and (self.rect.bottom >= block.rect.bottom) and not(self.rect.left >= block.rect.right) and not(self.rect.right <= block.rect.left) and not(self.rect.bottom <= block.rect.top):
-            #     self.rect.top = block.rect.bottom
-            #     self.atTopEdgeOfMap = True
-            #     self.resetMotionY()
-            # elif :
-            #     pass
+            if pygame.Rect.colliderect(self.rect, block.rect):
+                print('collide\n')
 
     def checkCollisions(self, blocksSpriteGroup):
 
@@ -210,7 +176,7 @@ class Player(pygame.sprite.Sprite):
         self.atRightEdgeOfMap = self.atLeftEdgeOfMap = self.atTopEdgeOfMap = self.atBottomEdgeOfMap = self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
 
         self.checkBorderCollision()
-        #self.checkBlockCollision(blocksSpriteGroup)
+        self.checkBlockCollision(blocksSpriteGroup)
 
         
                     
@@ -338,9 +304,11 @@ class Player(pygame.sprite.Sprite):
 
         self.moveHero(keysPressed)
 
+        self.checkCollisions(blocksSpriteGroup)
+
         self.updatePlayerAnimation(keysPressed)
 
-        self.checkCollisions(blocksSpriteGroup)
+        
 
 
 
