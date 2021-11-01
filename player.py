@@ -165,10 +165,11 @@ class Player(pygame.sprite.Sprite):
         #TODO: check for collison with blocks
         for block in blocksSpriteGroup:
             if pygame.Rect.colliderect(self.rect, block.rect):
-                print('collide\n')
+                
                 
                 # Collision at top
                 if(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.top <= block.rect.top):
+                    print('Collide Top\n')
 
                     self.atTopEdgeOfBlock = True
                     
@@ -179,6 +180,7 @@ class Player(pygame.sprite.Sprite):
 
                 # Collision at bottom
                 elif(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.bottom >= block.rect.bottom):
+                    print('Collide Bottom\n')
                     
                     self.atBottomEdgeOfBlock = True
                     self.rect.top = block.rect.bottom
@@ -187,13 +189,15 @@ class Player(pygame.sprite.Sprite):
                 # Collision at right
                 elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.right):
 
+                    print('Collide Right\n')
                     self.atRightEdgeOfBlock = True
                     self.rect.left = block.rect.right
                     self.resetMotionX()
 
                 #Collision at left
                 elif(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left):
-                    
+                    print('Collide Left\n')
+
                     self.atLeftEdgeOfBlock = True
                     self.rect.right = block.rect.left
                     self.resetMotionX()
@@ -208,68 +212,37 @@ class Player(pygame.sprite.Sprite):
 
 
 
-    # the new image we just assigned might have a different size than the
+    # the new image we just assigned might have a different height than the
     # previous image, better update the rect
     def createImageRect(self):
 
         if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap):
 
-            if self.atRightEdgeOfMap:
-                bottomRight = self.rect.bottomright
-
-                self.rect = self.image.get_rect()
-
-                self.rect.bottomright = bottomRight
-
-            elif self.atLeftEdgeOfMap:
-                bottomLeft= self.rect.bottomleft
-
-                self.rect = self.image.get_rect()
-
-                self.rect.bottomleft = bottomLeft
-
-            elif self.atTopEdgeOfMap:
+            if self.atTopEdgeOfMap:
                 top = self.rect.top
 
                 self.rect = self.image.get_rect()
 
                 self.rect.top = top
 
-            #else we are the bottomEdgeOfMap or in the air so we can just do it from the bottom left
-            else :
-                bottomLeft= self.rect.bottomleft
-
-                self.rect = self.image.get_rect()
-
-                self.rect.bottomleft = bottomLeft
-        
-        elif(self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock or self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock):
-            
-            if self.atRightEdgeOfBlock:
+            elif self.atBottomEdgeOfMap :
                 bottomLeft = self.rect.bottomleft
 
                 self.rect = self.image.get_rect()
 
                 self.rect.bottomleft = bottomLeft
+        
+        elif self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock:
 
-            elif self.atLeftEdgeOfBlock:
-                bottomRight= self.rect.bottomright
-
-                self.rect = self.image.get_rect()
-
-                self.rect.bottomright = bottomRight
-
-            elif self.atTopEdgeOfBlock:
-                print('TOP')
+            if self.atTopEdgeOfBlock:
                 bottomleft = self.rect.bottomleft
 
                 self.rect = self.image.get_rect()
 
                 self.rect.bottomleft = bottomleft
-                
 
             elif self.atBottomEdgeOfBlock:
-                topleft= self.rect.topleft
+                topleft = self.rect.topleft
 
                 self.rect = self.image.get_rect()
 
@@ -277,7 +250,7 @@ class Player(pygame.sprite.Sprite):
 
 
 
-        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natRightEdgeOfMap:{self.atRightEdgeOfMap}\natLeftEdgeOfMap:{self.atLeftEdgeOfMap}\natTopEdgeOfMap:{self.atTopEdgeOfMap}\natBottomEdgeOfMap:{self.atBottomEdgeOfMap}\natLeftEdge:{self.atLeftEdgeOfBlock}\natRightEdge:{self.atRightEdgeOfBlock}\natTopEdge{self.atTopEdgeOfBlock}\natBottomEdge:{self.atBottomEdgeOfBlock}\n')
+        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natRightEdgeOfMap:{self.atRightEdgeOfMap}\natLeftEdgeOfMap:{self.atLeftEdgeOfMap}\natTopEdgeOfMap:{self.atTopEdgeOfMap}\natBottomEdgeOfMap:{self.atBottomEdgeOfMap}\natLeftEdge:{self.atLeftEdgeOfBlock}\natRightEdge:{self.atRightEdgeOfBlock}\natTopEdge{self.atTopEdgeOfBlock}\natBottomEdge:{self.atBottomEdgeOfBlock}\nImage Width: {self.image.get_width()}\nImage Height: {self.image.get_height()}\n')
 
     #go to the next animation frame or reset if at the last frame
     def incrementAnimationFrame(self):
@@ -303,13 +276,7 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
 
     def standingOnObject(self):
-        HERO_HEIGHT = self.rect.height
-
-        #is he on the floor?
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            return True
-        #TODO Is he on another entity/block?
-        return False
+        return self.atTopEdgeOfBlock or self.atBottomEdgeOfMap
 
     '''
 
@@ -341,7 +308,7 @@ class Player(pygame.sprite.Sprite):
                 self.setAnimation(animation)
 
         #IF HE IS NOT STANDING ON SOMETHING AND VY > 0
-        if not self.standingOnObject() and self.vy > 0:
+        if  self.vy > 0 and not self.standingOnObject():
             animation = 'jump_fall'
             if not self.checkAnimation(animation):
                 self.setAnimation(animation)
