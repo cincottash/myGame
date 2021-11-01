@@ -19,10 +19,10 @@ class Player(pygame.sprite.Sprite):
         self.atTopEdgeOfMap = False
         self.atBottomEdgeOfMap = False
 
-        self.atLeftEdge = False
-        self.atRightEdge = False
-        self.atTopEdge = False
-        self.atBottomEdge = False
+        self.atLeftEdgeofBlock = False
+        self.atRightEdgeOfBlock = False
+        self.atTopEdgeOfBlock = False
+        self.atBottomEdgeofBlock = False
 
         self.currentAnmiation = 'idle'
         self.animationFrame = 0
@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
     def normalizeAcceleration(self):
         if self.ax < -MAX_ACCELERATION:
             self.ax = -MAX_ACCELERATION
-        elif self.ax > MAX_ACCELERATION: 
+        elif self.ax > MAX_ACCELERATION:
             self.ax = MAX_ACCELERATION
 
         if self.ay > MAX_ACCELERATION:
@@ -54,7 +54,7 @@ class Player(pygame.sprite.Sprite):
     def normalizeVelocity(self):
         if self.vx < -MAX_VELOCITY:
             self.vx = -MAX_VELOCITY
-        elif self.vx > MAX_VELOCITY: 
+        elif self.vx > MAX_VELOCITY:
             self.vx = MAX_VELOCITY
 
         if self.vy > MAX_VELOCITY:
@@ -116,7 +116,7 @@ class Player(pygame.sprite.Sprite):
             self.ax -= 0.2 * MAX_ACCELERATION
             self.horizontalFlip = True
 
-        
+
 
     def moveHero(self, keysPressed):
 
@@ -137,7 +137,7 @@ class Player(pygame.sprite.Sprite):
         #updates the rects coords
         self.rect = self.rect.move(self.vx, self.vy)
 
-    def checkBorderCollision(self):
+    def handleBorderCollision(self):
         #Left
         if self.rect.left <= 0:
             self.rect.left = 0
@@ -154,7 +154,7 @@ class Player(pygame.sprite.Sprite):
             self.resetMotionX()
 
             self.atRightEdgeOfMap = True
-        
+
         #bottom
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
@@ -164,22 +164,39 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
             self.atTopEdgeOfMap = True
 
-    def checkBlockCollision(self, blocksSpriteGroup):
+    def handleBlockCollision(self, blocksSpriteGroup):
         #TODO: check for collison with blocks
         for block in blocksSpriteGroup:
             if pygame.Rect.colliderect(self.rect, block.rect):
                 print('collide\n')
+                # Collision at top
+                if block.rect.top <= self.rect.bottom:
+                    self.atTopEdgeOfBlock = True
+                    self.vy = 0.0
+                    self.ay = 0.0
+                # Collision at bottom
+                elif block.rect.bottom >= self.rect.top:
+                    self.atBottomEdgeofBlock = True
+                # Collision at left
+                elif block.rect.left >= self.rect.right:
+                    self.atLeftEdgeofBlock = True
+                # Collision at right
+                elif block.rect.right <= self.rect.left:
+                    self.atRightEdgeOfBlock = True
+                else:
+                    print("Collision Error: see function handleBlockCollision")
 
-    def checkCollisions(self, blocksSpriteGroup):
+
+    def handleCollisions(self, blocksSpriteGroup):
 
 
-        self.atRightEdgeOfMap = self.atLeftEdgeOfMap = self.atTopEdgeOfMap = self.atBottomEdgeOfMap = self.atLeftEdge = self.atRightEdge = self.atTopEdge = self.atBottomEdge = False
+        self.atRightEdgeOfMap = self.atLeftEdgeOfMap = self.atTopEdgeOfMap = self.atBottomEdgeOfMap = self.atLeftEdgeOfBlock = self.atRightEdgeOfBlock = self.atTopEdgeOfBlock = self.atBottomEdgeOfBlock = False
 
-        self.checkBorderCollision()
-        self.checkBlockCollision(blocksSpriteGroup)
+        self.handleBorderCollision()
+        self.handleBlockCollision(blocksSpriteGroup)
 
-        
-                    
+
+
     # the new image we just assigned might have a different size than the
     # previous image, better update the rect
     def createImageRect(self):
@@ -219,7 +236,7 @@ class Player(pygame.sprite.Sprite):
 
 
 
-        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natRightEdgeOfMap:{self.atRightEdgeOfMap}\natLeftEdgeOfMap:{self.atLeftEdgeOfMap}\natTopEdgeOfMap:{self.atTopEdgeOfMap}\natBottomEdgeOfMap:{self.atBottomEdgeOfMap}\natLeftEdge:{self.atLeftEdge}\natRightEdge:{self.atRightEdge}\natTopEdge{self.atTopEdge}\natBottomEdge:{self.atBottomEdge}\n')
+        print(f'ax:{self.ax}\nvx:{self.vx}\nay:{self.ay}\nvy:{self.vy}\natRightEdgeOfMap:{self.atRightEdgeOfMap}\natLeftEdgeOfMap:{self.atLeftEdgeOfMap}\natTopEdgeOfMap:{self.atTopEdgeOfMap}\natBottomEdgeOfMap:{self.atBottomEdgeOfMap}\natLeftEdge:{self.atLeftEdgeOfBlock}\natRightEdge:{self.atRightEdgeOfBlock}\natTopEdge{self.atTopEdgeOfBlock}\natBottomEdge:{self.atBottomEdgeOfBlock}\n')
 
     #go to the next animation frame or reset if at the last frame
     def incrementAnimationFrame(self):
@@ -305,11 +322,6 @@ class Player(pygame.sprite.Sprite):
 
         self.moveHero(keysPressed)
 
-        self.checkCollisions(blocksSpriteGroup)
+        self.handleCollisions(blocksSpriteGroup)
 
         self.updatePlayerAnimation(keysPressed)
-
-        
-
-
-
