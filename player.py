@@ -172,8 +172,10 @@ class Player(pygame.sprite.Sprite):
                 # Collision at top
                 if block.rect.top <= self.rect.bottom:
                     self.atTopEdgeOfBlock = True
-                    self.vy = 0.0
-                    self.ay = 0.0
+                    #update the rect
+                    self.rect.bottom = block.rect.top
+
+                    self.resetMotionY()
                 # Collision at bottom
                 elif block.rect.bottom >= self.rect.top:
                     self.atBottomEdgeofBlock = True
