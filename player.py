@@ -176,17 +176,28 @@ class Player(pygame.sprite.Sprite):
                     self.rect.bottom = block.rect.top
 
                     self.resetMotionY()
+                
                 # Collision at bottom
                 elif block.rect.bottom >= self.rect.top:
                     self.atBottomEdgeofBlock = True
+                    self.rect.top = block.bottom
+                    self.resetMotionY()
+
+
                 # Collision at left
                 elif block.rect.left >= self.rect.right:
                     self.atLeftEdgeofBlock = True
+                    block.rect.left = self.rect.right
+                    self.resetMotionX()
+                
                 # Collision at right
                 elif block.rect.right <= self.rect.left:
                     self.atRightEdgeOfBlock = True
+                    block.rect.right = self.rect.left
+                    self.resetMotionY()
                 else:
                     print("Collision Error: see function handleBlockCollision")
+                    exit()
 
 
     def handleCollisions(self, blocksSpriteGroup):
