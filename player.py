@@ -201,7 +201,7 @@ class Player(pygame.sprite.Sprite):
                     self.rect.left = block.rect.right
                     self.resetMotionX()
                 else:
-                    print("Collision Error: see function handleBlockCollision\n")
+                    print("Collision Error: un handeled collision\n")
                     exit()
 
 
