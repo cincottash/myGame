@@ -170,28 +170,32 @@ class Player(pygame.sprite.Sprite):
             if pygame.Rect.colliderect(self.rect, block.rect):
                 print('collide\n')
                 # Collision at top
-                if block.rect.top <= self.rect.bottom:
+                if (block.rect.top <= self.rect.bottom) and (block.rect.bottom >= self.rect.bottom):
+                    print("\n TOP \n")
                     self.atTopEdgeOfBlock = True
                     #update the rect
                     self.rect.bottom = block.rect.top
 
                     self.resetMotionY()
-                
+
                 # Collision at bottom
-                elif block.rect.bottom >= self.rect.top:
+                elif (block.rect.bottom >= self.rect.top) and (block.rect.top <= self.rect.top):
+                    print("\n BOTTOM \n")
                     self.atBottomEdgeofBlock = True
-                    self.rect.top = block.bottom
+                    self.rect.top = block.rect.bottom
                     self.resetMotionY()
 
 
                 # Collision at left
-                elif block.rect.left >= self.rect.right:
+                elif (block.rect.left >= self.rect.right) and (block.rect.right <= self.rect.right):
+                    print("\n LEFT \n")
                     self.atLeftEdgeofBlock = True
                     block.rect.left = self.rect.right
                     self.resetMotionX()
-                
+
                 # Collision at right
-                elif block.rect.right <= self.rect.left:
+                elif (block.rect.right <= self.rect.left) and (block.rect.left >= self.rect.left):
+                    print("\n RIGHT \n")
                     self.atRightEdgeOfBlock = True
                     block.rect.right = self.rect.left
                     self.resetMotionY()
@@ -214,7 +218,7 @@ class Player(pygame.sprite.Sprite):
     # previous image, better update the rect
     def createImageRect(self):
 
-        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap):
+        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap or self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock or self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock):
 
             if self.atRightEdgeOfMap:
                 bottomRight = self.rect.bottomright
