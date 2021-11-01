@@ -250,6 +250,7 @@ class Player(pygame.sprite.Sprite):
         #is he on the floor?
         if self.rect.bottom >= SCREEN_HEIGHT:
             return True
+        #TODO Is he on another entity/block?
         return False
 
     '''
