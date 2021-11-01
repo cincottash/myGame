@@ -188,7 +188,7 @@ class Player(pygame.sprite.Sprite):
 
 
                 #Collision at left
-                elif(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left):
+                if(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left):
                     print("\n LEFT \n")
                     self.atLeftEdgeOfBlock = True
                     self.rect.right = block.rect.left
@@ -253,32 +253,32 @@ class Player(pygame.sprite.Sprite):
         # elif(self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock or self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock):
             
         #     if self.atRightEdgeOfBlock:
-        #         bottomRight = self.rect.bottomright
+        #         bottomLeft = self.rect.bottomleft
+
+        #         self.rect = self.image.get_rect()
+
+        #         self.rect.bottomleft = bottomLeft
+
+        #     elif self.atLeftEdgeOfBlock:
+        #         bottomRight= self.rect.bottomright
 
         #         self.rect = self.image.get_rect()
 
         #         self.rect.bottomright = bottomRight
 
-        #     elif self.atLeftEdgeOfBlock:
-        #         bottomLeft= self.rect.bottomleft
+        #     elif self.atTopEdgeOfBlock:
+        #         bottom = self.rect.bottom
 
         #         self.rect = self.image.get_rect()
 
-        #         self.rect.bottomleft = bottomLeft
+        #         self.rect.bottom = bottom
 
-        #     elif self.atTopEdgeOfBlock:
-        #         top = self.rect.top
+        #     elif self.atBottomEdgeOfBlock:
+        #         top= self.rect.top
 
         #         self.rect = self.image.get_rect()
 
         #         self.rect.top = top
-
-        #     elif self.atBottomEdgeOfBlock:
-        #         bottomLeft= self.rect.bottomleft
-
-        #         self.rect = self.image.get_rect()
-
-        #         self.rect.bottomleft = bottomLeft
 
 
 
