@@ -19,10 +19,10 @@ class Player(pygame.sprite.Sprite):
         self.atTopEdgeOfMap = False
         self.atBottomEdgeOfMap = False
 
-        self.atLeftEdgeofBlock = False
+        self.atLeftEdgeOfBlock = False
         self.atRightEdgeOfBlock = False
         self.atTopEdgeOfBlock = False
-        self.atBottomEdgeofBlock = False
+        self.atBottomEdgeOfBlock = False
 
         self.currentAnmiation = 'idle'
         self.animationFrame = 0
@@ -169,8 +169,9 @@ class Player(pygame.sprite.Sprite):
         for block in blocksSpriteGroup:
             if pygame.Rect.colliderect(self.rect, block.rect):
                 print('collide\n')
+                
                 # Collision at top
-                if (block.rect.top <= self.rect.bottom) and (block.rect.bottom >= self.rect.bottom):
+                if(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.top <= block.rect.top) :
                     print("\n TOP \n")
                     self.atTopEdgeOfBlock = True
                     #update the rect
@@ -179,28 +180,28 @@ class Player(pygame.sprite.Sprite):
                     self.resetMotionY()
 
                 # Collision at bottom
-                elif (block.rect.bottom >= self.rect.top) and (block.rect.top <= self.rect.top):
+                elif(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.bottom >= block.rect.bottom):
                     print("\n BOTTOM \n")
-                    self.atBottomEdgeofBlock = True
+                    self.atBottomEdgeOfBlock = True
                     self.rect.top = block.rect.bottom
                     self.resetMotionY()
 
 
-                # Collision at left
-                elif (block.rect.left >= self.rect.right) and (block.rect.right <= self.rect.right):
+                #Collision at left
+                elif(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.right >= block.rect.left):
                     print("\n LEFT \n")
-                    self.atLeftEdgeofBlock = True
-                    block.rect.left = self.rect.right
+                    self.atLeftEdgeOfBlock = True
+                    self.rect.right = block.rect.left
                     self.resetMotionX()
 
-                # Collision at right
-                elif (block.rect.right <= self.rect.left) and (block.rect.left >= self.rect.left):
+                # # Collision at right
+                elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.left):
                     print("\n RIGHT \n")
                     self.atRightEdgeOfBlock = True
-                    block.rect.right = self.rect.left
+                    self.rect.left = block.rect.right
                     self.resetMotionY()
                 else:
-                    print("Collision Error: see function handleBlockCollision")
+                    print("Collision Error: see function handleBlockCollision\n")
                     exit()
 
 
