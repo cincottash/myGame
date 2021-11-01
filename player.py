@@ -188,18 +188,18 @@ class Player(pygame.sprite.Sprite):
 
 
                 #Collision at left
-                elif(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.right >= block.rect.left):
+                elif(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left):
                     print("\n LEFT \n")
                     self.atLeftEdgeOfBlock = True
                     self.rect.right = block.rect.left
                     self.resetMotionX()
 
                 # # Collision at right
-                elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.left):
+                elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.right):
                     print("\n RIGHT \n")
                     self.atRightEdgeOfBlock = True
                     self.rect.left = block.rect.right
-                    self.resetMotionY()
+                    self.resetMotionX()
                 else:
                     print("Collision Error: see function handleBlockCollision\n")
                     exit()
@@ -219,7 +219,7 @@ class Player(pygame.sprite.Sprite):
     # previous image, better update the rect
     def createImageRect(self):
 
-        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap or self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock or self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock):
+        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap):
 
             if self.atRightEdgeOfMap:
                 bottomRight = self.rect.bottomright
@@ -243,14 +243,42 @@ class Player(pygame.sprite.Sprite):
                 self.rect.top = top
 
             #else we are the bottomEdgeOfMap or in the air so we can just do it from the bottom left
-            else:
+            elif self.atBottomEdgeOfMap:
                 bottomLeft= self.rect.bottomleft
 
                 self.rect = self.image.get_rect()
 
                 self.rect.bottomleft = bottomLeft
+        
+        # elif(self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock or self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock):
+            
+        #     if self.atRightEdgeOfBlock:
+        #         bottomRight = self.rect.bottomright
 
+        #         self.rect = self.image.get_rect()
 
+        #         self.rect.bottomright = bottomRight
+
+        #     elif self.atLeftEdgeOfBlock:
+        #         bottomLeft= self.rect.bottomleft
+
+        #         self.rect = self.image.get_rect()
+
+        #         self.rect.bottomleft = bottomLeft
+
+        #     elif self.atTopEdgeOfBlock:
+        #         top = self.rect.top
+
+        #         self.rect = self.image.get_rect()
+
+        #         self.rect.top = top
+
+        #     elif self.atBottomEdgeOfBlock:
+        #         bottomLeft= self.rect.bottomleft
+
+        #         self.rect = self.image.get_rect()
+
+        #         self.rect.bottomleft = bottomLeft
 
 
 
