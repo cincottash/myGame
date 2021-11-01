@@ -20,7 +20,6 @@ def main():
 
 	while(not done):
 
-
 		for event in pygame.event.get():
 			#Enter will exit the test
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:

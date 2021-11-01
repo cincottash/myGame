@@ -9,10 +9,10 @@ class Player(pygame.sprite.Sprite):
 
         self.horizontalFlip = False
 
-        self.vx = 0
-        self.vy = 0
-        self.ax = 0
-        self.ay = 0
+        self.vx = 0.0
+        self.vy = 0.0
+        self.ax = 0.0
+        self.ay = 0.0
 
         self.atRightEdgeOfMap = False
         self.atLeftEdgeOfMap = False
@@ -68,12 +68,12 @@ class Player(pygame.sprite.Sprite):
 
             if self.ax < 0:
                 if(self.ax + DAMPING_CONSTANT_A >= 0):
-                    self.ax = 0
+                    self.ax = 0.0
                 else:
                     self.ax += DAMPING_CONSTANT_A
             elif self.ax > 0:
                 if(self.ax - DAMPING_CONSTANT_A <= 0):
-                    self.ax = 0
+                    self.ax = 0.0
                 else:
                     self.ax -= DAMPING_CONSTANT_A
 
@@ -83,20 +83,20 @@ class Player(pygame.sprite.Sprite):
         if not(keysPressed[pygame.K_a] or keysPressed[pygame.K_d]):
             if self.vx < 0:
                 if(self.vx + DAMPING_CONSTANT_V >= 0):
-                    self.vx = 0
+                    self.vx = 0.0
                 else:
                     self.vx += DAMPING_CONSTANT_V
             elif self.vx > 0:
                 if(self.vx - DAMPING_CONSTANT_V <= 0):
-                    self.vx = 0
+                    self.vx = 0.0
                 else:
                     self.vx -= DAMPING_CONSTANT_V
 
     def resetMotionX(self):
-        self.ax = self.vx = 0
+        self.ax = self.vx = 0.0
 
     def resetMotionY(self):
-        self.ay = self.vy = 0
+        self.ay = self.vy = 0.0
 
 
     def handleKeyPress(self, keysPressed):
