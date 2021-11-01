@@ -46,9 +46,6 @@ class Player(pygame.sprite.Sprite):
             self.ay = MAX_ACCELERATION
         elif self.ay < -MAX_ACCELERATION:
             self.ay = -MAX_ACCELERATION
-        # self.ax = min(abs(self.ax), MAX_ACCELERATION)*self.ax/abs(self.ax)
-        # self.ay = min(abs(self.ay), MAX_ACCELERATION)*self.ay/abs(self.ay)
-
 
     #keeps -MAX_VELOCITY < vx, vy < MAX_VELOCITY
     def normalizeVelocity(self):
@@ -171,7 +168,7 @@ class Player(pygame.sprite.Sprite):
                 print('collide\n')
                 
                 # Collision at top
-                if(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.top <= block.rect.top) :
+                if(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.top <= block.rect.top) and self.vy >=0:
                     print("\n TOP \n")
                     self.atTopEdgeOfBlock = True
                     #update the rect
@@ -180,29 +177,28 @@ class Player(pygame.sprite.Sprite):
                     self.resetMotionY()
 
                 # Collision at bottom
-                elif(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.bottom >= block.rect.bottom):
+                elif(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.bottom >= block.rect.bottom) and self.vy <= 0:
                     print("\n BOTTOM \n")
                     self.atBottomEdgeOfBlock = True
                     self.rect.top = block.rect.bottom
                     self.resetMotionY()
 
-
                 #Collision at left
-                if(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left):
+                if(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left) and self.vx >= 0:
                     print("\n LEFT \n")
                     self.atLeftEdgeOfBlock = True
                     self.rect.right = block.rect.left
                     self.resetMotionX()
 
                 # # Collision at right
-                elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.right):
+                elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.right and self.vx <=0):
                     print("\n RIGHT \n")
                     self.atRightEdgeOfBlock = True
                     self.rect.left = block.rect.right
                     self.resetMotionX()
-                else:
-                    print("Collision Error: un handeled collision\n")
-                    exit()
+                # else:
+                #     print("Collision Error: un handeled collision\n")
+                #     exit()
 
 
     def handleCollisions(self, blocksSpriteGroup):
@@ -243,7 +239,7 @@ class Player(pygame.sprite.Sprite):
                 self.rect.top = top
 
             #else we are the bottomEdgeOfMap or in the air so we can just do it from the bottom left
-            elif self.atBottomEdgeOfMap:
+            else :
                 bottomLeft= self.rect.bottomleft
 
                 self.rect = self.image.get_rect()
