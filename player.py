@@ -169,7 +169,7 @@ class Player(pygame.sprite.Sprite):
                 
                 # Collision at top
                 if(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.top <= block.rect.top):
-                    print('Collide Top\n')
+                    print('Block Collide Top\n')
 
                     self.atTopEdgeOfBlock = True
                     
@@ -180,7 +180,7 @@ class Player(pygame.sprite.Sprite):
 
                 # Collision at bottom
                 elif(self.rect.right >= block.rect.left and self.rect.left <= block.rect.right and self.rect.bottom >= block.rect.bottom):
-                    print('Collide Bottom\n')
+                    print('Block Collide Bottom\n')
                     
                     self.atBottomEdgeOfBlock = True
                     self.rect.top = block.rect.bottom
@@ -189,14 +189,14 @@ class Player(pygame.sprite.Sprite):
                 # Collision at right
                 elif(self.rect.bottom >= block.rect.top and self.rect.top <=block.rect.bottom and self.rect.right >=block.rect.right):
 
-                    print('Collide Right\n')
+                    print('Block Collide Right\n')
                     self.atRightEdgeOfBlock = True
                     self.rect.left = block.rect.right
                     self.resetMotionX()
 
                 #Collision at left
                 elif(self.rect.bottom >= block.rect.top and self.rect.top <= block.rect.bottom and self.rect.left <= block.rect.left):
-                    print('Collide Left\n')
+                    print('Block Collide Left\n')
 
                     self.atLeftEdgeOfBlock = True
                     self.rect.right = block.rect.left
@@ -210,43 +210,40 @@ class Player(pygame.sprite.Sprite):
         self.handleBorderCollision()
         self.handleBlockCollision(blocksSpriteGroup)
 
-
-
     # the new image we just assigned might have a different height than the
     # previous image, better update the rect
     def createImageRect(self):
-
-        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap or self.atLeftEdgeOfMap or self.atRightEdgeOfMap):
-
+        if(self.atTopEdgeOfMap or self.atBottomEdgeOfMap):
+            #THIS IS SHANE EDITING IN THE TEST BRANCH
             if self.atTopEdgeOfMap:
-                top = self.rect.top
+                midtop = self.rect.midtop
 
                 self.rect = self.image.get_rect()
 
-                self.rect.top = top
+                self.rect.midtop = midtop
 
             elif self.atBottomEdgeOfMap :
-                bottomLeft = self.rect.bottomleft
+                midbottom = self.rect.midbottom
 
                 self.rect = self.image.get_rect()
 
-                self.rect.bottomleft = bottomLeft
+                self.rect.midbottom = midbottom
         
-        elif self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock or self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock:
+        elif self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock:
 
             if self.atTopEdgeOfBlock:
-                bottomleft = self.rect.bottomleft
+                midbottom = self.rect.midbottom
 
                 self.rect = self.image.get_rect()
 
-                self.rect.bottomleft = bottomleft
+                self.rect.midbottom = midbottom
 
             elif self.atBottomEdgeOfBlock:
-                topleft = self.rect.topleft
+                midtop = self.rect.midtop
 
                 self.rect = self.image.get_rect()
 
-                self.rect.topleft = topleft
+                self.rect.midtop = midtop
 
 
 
