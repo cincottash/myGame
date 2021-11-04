@@ -232,7 +232,7 @@ class Player(pygame.sprite.Sprite):
 
                 self.rect.bottomleft = bottomLeft
         
-        elif self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock:
+        elif self.atTopEdgeOfBlock or self.atBottomEdgeOfBlock or self.atLeftEdgeOfBlock or self.atRightEdgeOfBlock:
 
             if self.atTopEdgeOfBlock:
                 bottomleft = self.rect.bottomleft
